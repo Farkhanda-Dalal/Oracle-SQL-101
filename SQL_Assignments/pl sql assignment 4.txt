@@ -1,0 +1,260 @@
+
+										Triggers
+
+=========================================================================================================================================================================================
+
+Practice 1
+
+Implement the following business rule with the help of a trigger named TR_CHECK_DEPT and a procedure named SECURE_DML. Changes to data in the dept table, 
+will be allowed only in the month of March.Create a procedure called SECURE_DML that prevents the DML statement from executing in any other month than March.  
+In case, a user tries to modify the table in any other month, the procedure should display a message You can modify or add a department only at the end of a financial year”
+Create a statement level triggerTR_CHECK_DEPT on the dept table that calls the above procedure.Test it by inserting a new record in the dept table.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Trigger:
+
+create or replace trigger TR_CHECK_DEPT
+
+before 
+insert on dept
+for each row
+
+BEGIN
+
+	DECLARE
+	
+	dno number(5):=&dno;
+	dnm VARCHAR2(20):=&dnm;
+	locn VARCHAR2(20):=&locn;
+	d date:=&date;
+
+	BEGIN
+
+	SECURE_DML(dno,dnm,locn,d);
+
+	END;
+
+END;
+/
+
+Procedure:
+
+create or replace procedure SECURE_DML(dno IN number,dnm IN VARCHAR2,locn IN VARCHAR2,d IN date)
+is
+
+BEGIN
+
+if d like '%mar%' then 
+insert into dept values(dno,dnm,locn);
+else
+dbms_output.put_line('You can modify or add a department only at the end of a financial year');
+end if;
+
+END;
+/
+
+Anonymous Block:
+
+DECLARE
+
+dno number(5);
+dnm VARCHAR2(20);
+locn VARCHAR2(20);
+d date;
+
+BEGIN
+
+SECURE_DML(dno,dnm,locn,d);
+
+END;
+/
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Practice 2
+
+Enforce referential integrity with a trigger named TR_CASCADE_CHANGE. When the value of DEPTNO changes in the Dept table, cascade the update to the corresponding rows in the EMP table. 
+Test it by updating the value of a deptno from the dept table.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Trigger:
+
+create or replace trigger TR_CASCADE_CHANGE
+
+after
+update of deptno on dept
+for each row 
+
+BEGIN
+
+update employee2 set deptno=:new.deptno where deptno=:old.deptno;
+
+END;
+/
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Output:
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+update dept set deptno=10 where deptno=30;
+1 row updated.
+
+ select * from employee2;
+
+     EMPNO ENAME                          EJOB       GRA JOINING         ESAL     DEPTNO MANAGER              COMMISSION
+---------- ------------------------------ ---------- --- --------- ---------- ---------- -------------------- ----------
+       101 Kumar                          Clerk      b   01-JAN-08      19326         10
+       102 Sunil                          President  c   01-FEB-08      15840         10
+       103 Farkhanda                      CEO        A   13-JUL-06      11000         10
+       104 Farkhanda                      Manager    a   10-DEC-08      50000         10
+       200 priya                          President  a   01-MAR-03      20000         50
+       105 Aarti                          Clerk      b   12-JUL-05      15000         20
+       106 Suresh                         Engineer   a   09-FEB-03                    20
+       107 Fatima                         Analyst        13-AUG-10      10000         50 Farkhanda                  1000
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+ 
+Practice 3
+
+Create a trigger named TR_CHECK_COMM to implement the following business rule. In EMP table, employee having job as Salesman should receive a commission.
+A Salesman must receive a commission of not less than Rs. 100. Employees who are not sales persons are not entitled to get commission (comm value should be NULL).
+Test it by inserting a record in the emp table.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+
+create or replace trigger TR_CHECK_COMM
+
+before 
+insert or update or delete on employee2
+
+BEGIN
+
+	DECLARE
+
+	job employee2.ejob%type;
+	comm employee2.commission%type;
+	
+	cursor c1 
+	is
+	select ejob,commission from employee2;
+
+	BEGIN
+
+	OPEN c1;
+
+	fetch c1 into job,comm;
+
+	if (job='Salesman') then
+	comm is not null;
+	end if;
+
+	CLOSE c1;
+
+	END;
+
+END;
+/
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Practice 4
+
+While modifying the EMP table, ensure that the salary is in the valid range as specified in the SALGRADE table (between lowest=C  losal and highest=B  hisal=C) 
+with the help of a trigger named TR_VALIDATE_SAL.Test it by updating the salary value of an existing record in the emp table.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+
+Trigger:
+
+create or replace trigger TR_VALIDATE_SAL
+
+after 
+update of esal on employee2
+
+DECLARE
+
+cursor c1
+is
+select *  from employee2;
+
+BEGIN
+
+for e_rec in c1
+
+loop
+
+if e_rec.esal<10000 then
+update employee2 set grade='C' where esal=e_rec.esal;
+
+elsif e_rec.esal between 10000 and 30000 then
+update employee2 set grade='B';
+
+else
+update employee2 set grade='A';
+
+end if;
+
+end loop;
+
+ END;
+ /
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Practice 5
+
+Create a table named salaryLog with the appropriate columns and insert  the empno, new grade, old salary and new salary values in salaryLog table if the grade of an employee changes. 
+Create a trigger named TR_CHECK_GRADE that will be fired when a user modifies the EMP table. It will check whether the grade has changed by making use of the SALGRADE table. 
+(Grade is dependent on Salary.) If grade is changed, the trigger will log the corresponding employee number, old salary, new salary and new grade into  salaryLog table. 
+Test the working of the trigger by firing an appropriate DML query.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+									Mutating Table Error Workaround 
+
+Practice 6
+
+Create triggers named TR_RESTRICT_STRENGTH and TR_LIMIT_ANALYSTS respectively, on emp table, to implement the following business rules
+There can not be more than 5 employees in department number 30
+There can not be more than 4 ANALYSTS in the organization (There can not be more than 4 records in the emp table with the job ANALYST)
+Fire appropriate DML queries to check the working of the triggers
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+create or replace trigger TR_VALIDATE_SAL
+
+before
+update of esal on employee2
+
+BEGIN
+
+	DECLARE
+
+	sal employee2.esal%type;
+
+	BEGIN
+
+	select esal into sal from employee2;
+
+	if sal<10000 then
+	update employee2 set grade='C' where esal=sal;
+
+	elsif sal between 10000 and 30000 then
+	update employee2 set grade='B';
+
+	else
+	update employee2 set grade='A';
+
+	end if;
+
+end if;
+
+	END;
+
+ END;
+ /

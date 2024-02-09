@@ -1,0 +1,471 @@
+
+											Cursors
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Practice 1
+	
+Write a PL/SQL block that takes a department number from a user and increases the salary of all the employees belonging to the department by 10%.
+The block should display on the screen how many records are updated.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+---------------------------------------------------------------------------------------------------------------------------------------------------
+DECLARE
+eid employee.empid%type;
+dep employee.deptno%type;
+sal employee.empsalary%type;
+incr employee.empsalary%type;
+ctn number;
+
+cursor c1
+is
+select empsalary,empid INTO sal,eid from employee where deptno=&dep;
+
+BEGIN
+
+Open c1;
+
+loop
+
+fetch c1 into sal,eid;
+exit when c1%notfound;
+
+dbms_output.put_line('Old Salary:'||sal);
+
+if c1%found then
+incr:=sal*0.1;
+dbms_output.put_line('New Salary:'||(sal+incr));
+
+update employee set empsalary=(sal+incr) where empid=eid;
+end if;
+
+end loop;
+
+ctn:=c1%rowcount;
+dbms_output.put_line('No of rows updated:'||ctn);
+
+CLOSE c1;
+
+END;
+/
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Practice 2
+
+Write a PL/SQL block to display the employee name, salary and their corresponding grades (by making use of the “salgrade” table) for the first five employees 
+recorded in the “emp” table by making use of :
+Simple for loop with “EXIT WHEN” condition
+The “WHILE” condition
+Cursor FOR LOOP 
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+---------------------------------------------------------------------------------------------------------------------------------------------------
+DECLARE
+
+enm employee2.ename%type;
+sal employee2.esal%type;
+gra salgrade.sgrade%type;
+
+Cursor c2 
+is
+select * from(select e.ename,e.esal,s.sgrade from employee2 e inner join  salgrade s on e.empno=s.empno)where rownum<=5;
+
+BEGIN
+
+for e_rec in c2
+
+loop
+
+exit when c2%notfound;
+
+dbms_output.put_line('Name:'||e_rec.ename||' '||'Salary:'||e_rec.esal||' '||'Salary Grade:'||e_rec.sgrade);
+
+end loop;
+
+END;
+/
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Practice 3
+
+Write a PL/SQL block that displays names and salaries of all CLERK’s recorded in the “emp” table by making use of a cursor.
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+---------------------------------------------------------------------------------------------------------------------------------------------------
+DECLARE
+
+enm employee2.ename%type;
+sal employee2.esal%type;
+
+cursor c3
+is
+select ename,esal from employee2 where ejob='Clerk';
+
+BEGIN
+
+OPEN c3;
+
+loop
+
+fetch c3 INTO enm,sal;
+exit when c3%notfound;
+
+dbms_output.put_line(enm||' '||sal);
+
+end loop;
+
+CLOSE c3;
+
+END;
+/
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Practice 4
+
+Write a PL/SQL block that accepts a value of a job from user and displays the names, department numbers and salaries of the employees from the “emp” table having that job.
+The block makes use of a parameterized cursor. The user input is passed on to the cursor as a parameter. 
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+---------------------------------------------------------------------------------------------------------------------------------------------------
+DECLARE
+
+enm employee2.ename%type;
+dep employee2.deptno%type;
+sal employee2.esal%type;
+job employee2.ejob%type;
+
+cursor c4(job varchar2)
+is
+select ename,deptno,esal from employee2 where ejob=&job;
+
+BEGIN
+
+OPEN c4(job);
+
+loop
+
+fetch c4 INTO enm,dep,sal;
+exit when c4%notfound;
+
+dbms_output.put_line(enm||' '||dep||' '||sal);
+
+end loop;
+
+CLOSE c4;
+
+END;
+/
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Practice 5
+
+Write a PL/SQL block that updates the salaries of the employees as per the following rules. 
+If the job is CLERK and deptno is 10 then increase the salary by 20%
+If the job is MANAGER and deptno is 20 then increase the salary by 5%
+For all the other cases increase the salary by 10%
+The block makes use of a cursor for performing the updates and ensures that the appropriate locks are taken on the data retrieved by the cursor, as the data is to be updated. 
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+---------------------------------------------------------------------------------------------------------------------------------------------------
+DECLARE
+
+job employee2.ejob%type;
+sal employee2.esal%type;
+incr employee2.esal%type;
+dep employee2.deptno%type;
+
+cursor c5 
+is
+select ejob,esal,deptno from employee2;
+
+BEGIN
+
+OPEN c5;
+
+fetch c5 INTO job,sal,dep;
+
+if (job='Clerk')and(dep=10) then
+incr:=sal*0.2;
+
+elsif  (job='Manager')and(dep=20) then
+incr:=sal*0.05;
+
+else
+incr:=sal*0.1;
+end if;
+
+update employee2 set esal=(sal+incr) where (ejob=job)and(deptno=dep);
+
+CLOSE c5;
+
+END;
+/
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Practice 6
+
+Write a PL/SQL block that retrieves information from the “dept” and “emp” table and displays it in the following format
+
+Department Number :10		Department Name : XXXX
+________________________________________________________
+EMPLOYEE NUMBER 	 EMPLOYEE NAME	SALARY  	JOB
+
+XXXXXX		XXXXXX		XXXX		XXXXX
+XXXXXX		XXXXXX		XXXX		XXXXX
+.........
+
+Department Number :20		Department Name : XXXX
+________________________________________________________
+EMPLOYEE NUMBER 	 EMPLOYEE NAME	SALARY  	JOB
+
+XXXXXX		XXXXXX		XXXX		XXXXX
+XXXXXX		XXXXXX		XXXX		XXXXX
+ 	
+    ......and so on for all the departments recorded in the “dept” table.
+Use parametersied cursors
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+---------------------------------------------------------------------------------------------------------------------------------------------------
+DECLARE
+
+dno employee2.deptno%type;
+eno employee2.empno%type;
+enm employee2.ename%type;
+sal employee2.esal%type;
+job employee2.ejob%type;
+dnm dept.dname%type;
+
+cursor c1 
+is
+select deptno,dname from dept;
+
+cursor c2 
+is
+select empno,ename,esal,ejob from employee2 where deptno=dno;
+
+BEGIN
+
+OPEN c1;
+
+loop
+
+fetch c1 INTO dno,dnm;
+exit when c1%notfound;
+
+dbms_output.put_line('Dept No :'||dno||' '||'Dept Name :'||dnm);
+
+	OPEN c2;
+
+	loop
+
+	fetch c2 INTO eno,enm,sal,job;
+	exit when c2%notfound;
+
+	dbms_output.put_line('Employee No :'||eno||' '||'Employee Name :'||enm||' '||'Employee Salary :'||sal||' '||'Employee Job :'||job);
+
+	end loop;
+
+	CLOSE c2;
+
+end loop;
+
+CLOSE c1;
+
+END;
+/
+
+DECLARE
+      cursor c1 is select * from(select e.empno,e.ename,e.esal,e.ejob,d.deptno,d.dname from employee2 e inner join dept d on d.deptno=e.deptno) ;
+      id employee2.empno%type;
+      name employee2.ename%type;
+      sal employee2.esal%type;
+      job employee2.ejob%type;
+      dep dept.deptno%type;
+      dn  dept.dname%type;
+     
+     BEGIN
+      open c1;
+      
+     LOOP
+     FETCH c1 INTO id,name,sal,job,dep,dn;
+     Exit when c1%notfound;
+         DBMS_OUTPUT.PUT_LINE('Department Number :' || dep || '		Department Name : ' || dn);
+         DBMS_OUTPUT.PUT_LINE('_________________________');
+         DBMS_OUTPUT.PUT_LINE('EMPLOYEE NUMBER 	 EMPLOYEE NAME	       SALARY  	                 JOB');
+         
+         DBMS_OUTPUT.PUT_LINE(    id || '		      ' ||name || '		' || sal || '		' || job);
+     
+     END LOOP;
+        
+     CLOSE c1;   
+     END;
+     /
+
+Exceptions
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Practice 7 
+
+Create a table named MESSAGES (err_message VARCHAR2(250))
+Write a PL/SQL block that accepts a salary value from a user and displays name of the employee having the salary value, on the screen. 
+ If the salary entered returns more than one row, handle the exception with an appropriate Exception handler and insert into the MESSAGES table the message
+ “ More than one employee with salary of <input salary>”
+ If the salary entered does not return any  rows, handle the exception with an appropriate Exception handler and insert into the MESSAGES table the message
+ “ No employee with salary of < input salary>”
+ If the salary entered returns only one row, insert into the MESSAGES table the employee’s name 
+ Handle any other exception with an appropriate Exception handler and insert into the MESSAGES table the message “ Some other error occurred”
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+---------------------------------------------------------------------------------------------------------------------------------------------------
+create table MESSAGES
+(
+err_message VARCHAR2(250)
+);
+
+DECLARE 
+
+sal employee2.esal%type:=&sal;
+enm employee2.ename%type;
+
+BEGIN
+
+select ename INTO enm from employee2 where esal=sal;
+insert into messages values(enm||' '||'has salary of '||sal);
+
+EXCEPTION
+
+	when too_many_rows then
+	dbms_output.put_line('query returns more than 1 row');
+	insert into messages values('More than one employee with salary of '||sal);
+
+	when no_data_found then
+	insert into messages values('No employee with salary of '||sal);
+
+	when others then
+	insert into messages values('Some other error occurred');
+
+END;
+/
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Practice 8
+
+Write a PL/SQL block that accepts all the column values for dept table as user inputs and inserts a record in the dept table. 
+The block should give a name DUPLICATE_DEPT to the error for duplicate value of the primary key, deptno. (Use pragma EXCEPTION_INIT) 
+The block should write a handler for handling the exception fired when a duplicated value is entered for deptno. The handler should have code 
+for displaying an appropriate message on the screen when DUPLICATE_DEPT is fired.
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+---------------------------------------------------------------------------------------------------------------------------------------------------
+PROBLEM:
+DO NOT KNOW HOW TO WRITE WITH pragma EXCEPTION_INIT
+
+DECLARE
+
+dno dept.deptno%type:=&dno;
+dnm dept.dname%type:=&dnm;
+dl dept.loc%type:=&dl;
+
+BEGIN
+
+insert into dept values(dno,dnm,dl);
+
+EXCEPTION
+	when  DUP_VAL_ON_INDEX then
+	dbms_output.put_line('DUPLICATE_DEPT');
+
+END;
+/
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Practice 9
+
+Write a PL/SQL BLOCK to check for more than one President (Job column) in the “emp” table. Create a user defined exception named DUPLICATE_PRESIDENT
+that should be raised when more than one president is found in the “emp” table. The block should handle the exception by displaying a message “MORE THAN ONE PRESIDENT” on the screen.
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+---------------------------------------------------------------------------------------------------------------------------------------------------
+DECLARE 
+
+job employee2.ejob%type;
+ctn number;
+
+dup exception;
+pragma exception_INIT(DUP,-20015);
+
+cursor c1 
+is
+select ejob from employee2 where ejob='President';
+
+BEGIN
+
+OPEN c1;
+
+loop
+
+fetch c1 into job;
+exit when c1%notfound;
+
+end loop;
+
+ctn:=c1%rowcount;
+dbms_output.put_line('No of people with job President:'||ctn);	
+
+CLOSE c1;
+
+if ctn>1 then
+	raise dup;
+end if;
+
+EXCEPTION
+	when dup then 
+	dbms_output.put_line('MORE THAN ONE PRESIDENT');
+
+END;
+/
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Practice 10
+Write a PL/SQL block that accepts the employee numbers of two employees as two user inputs empno1 and empno2. If empno1 exists in the “emp” table,
+then the block increases the salary of the employee by 10%. If empno2 exists in the “emp” table then the block increases his salary by 20%. 
+The block should raise and handle the errors if empno1 or empno2 or both do not exist, by displaying the appropriate messages. 
+Note that if empno1 does not exist but empno2 exists then the salary of empno2 must be increased. Also when both empno1 and empno2 do not
+exist then the error must be handled by the block.
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+---------------------------------------------------------------------------------------------------------------------------------------------------
+DECLARE
+
+empno1 employee2.empno%type:=&empno1;
+empno2 employee2.empno%type:=&empno2;
+sal employee2.esal%type;
+ctn number;
+
+BEGIN
+
+select esal into sal from employee2 where empno=empno1;
+update employee2 set esal=(sal+(sal*0.1)) where empno=empno1;
+
+dbms_output.put_line('THANK');
+
+select esal into sal from employee2 where empno=empno2;
+update employee2 set esal=(sal+(sal*0.2)) where empno=empno2;
+
+EXCEPTION
+	when no_data_found then
+	dbms_output.put_line('Invalid Employee No');
+	
+END;
+/
+
+PROBLEM:
+WHEN EMPNO1 IS INVALID IT GOES TO EXCEPTION AND ENDS PROGRAM THERE ONLY.
+
+
+
+
+
+
+

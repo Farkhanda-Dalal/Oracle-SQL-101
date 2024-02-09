@@ -1,0 +1,221 @@
+JOINTS:
+we can fetch records from more than 1 table using join.While executing join there should be a common column between both tables.There are diff types of joins:
+Inner Join
+Outer left Join
+Outer rigth Join
+Self Join
+Cross Join
+Full Join
+
+create table dept
+(
+deptno number(5) primary key,
+dname varchar2(20),
+loc varchar2(20)
+);
+
+insert into dept values(10,'Testing','Mumbai');
+insert into dept values(20,'Dev','Pune');
+insert into dept values(50,'HR','Pune');
+
+create table employee
+(
+empno number(5) primary key,
+ename varchar(20),
+salary float,
+deptno number(5)
+);
+
+insert into employee values(1,'ram',10000,10);
+insert into employee values(5,'krishna',20000,20);
+insert into employee values(2,'ganesh',20000,40);
+------------------------------------------------------------------------------------------------------------------------
+Inner Joint:
+select e.ename,e.deptno,d.dname from employee e,dept d where e.deptno=d.deptno;
+				OR
+SELECT e.ename,e.deptno,d.dname FROM employee e INNER JOIN dept d ON e.deptno=d.deptno;
+
+ENAME                    DEPTNO DNAME
+-------------------- ---------- --------------------
+ram                          10 Testing
+krishna                      20 Dev
+
+employee name and department name was printed if the department no is common.
+
+---------------------------------------------------------------------------------------------------------------------------
+Left OUTER Joint:
+select e.ename,e.deptno,d.dname from employee e LEFT OUTER JOIN dept d ON e.deptno=d.deptno;
+
+ENAME                    DEPTNO DNAME
+-------------------- ---------- --------------------
+ram                          10 Testing
+krishna                      20 Dev
+ganesh                       40
+
+			OR 
+SELECT * FROM dept d LEFT OUTER JOIN employee e ON d.deptno=e.deptno;
+    DEPTNO DNAME                LOC                       EMPID EMPNAME               EMPSALARY CITY                     DEPTNO
+---------- -------------------- -------------------- ---------- -------------------- ---------- -------------------- ----------
+        10 Design               Mumbai                      101 Ramesh                16295.433 Mumbai                       10
+        20 Production           Chakkan                     102 Amit                      20000 Chennai                      20
+        10 Design               Mumbai                      103 Suresh                   7320.5 Pune                         10
+        30 Education                                        105 Ganesh                    12000 Mumbai                       30
+        50 Quality Control      Pune
+
+all rows from left side table and only matching record from rigth table.
+
+-------------------------------------------------------------------------------------------------------------------------------
+RIGHT OUT JOINT:
+select e.ename,e.deptno,d.dname from employee e RIGHT OUTER JOIN dept d ON e.deptno=d.deptno;
+
+
+ENAME                    DEPTNO DNAME
+-------------------- ---------- --------------------
+ram                          10 Testing
+krishna                      20 Dev
+                                HR
+
+				OR
+
+SELECT * FROM dept d RIGHT OUTER JOIN employee e ON d.deptno=e.deptno;
+
+    DEPTNO DNAME                LOC                       EMPID EMPNAME               EMPSALARY CITY                     DEPTNO
+---------- -------------------- -------------------- ---------- -------------------- ---------- -------------------- ----------
+        10 Design               Mumbai                      101 Ramesh                16295.433 Mumbai                       10
+        20 Production           Chakkan                     102 Amit                      20000 Chennai                      20
+        10 Design               Mumbai                      103 Suresh                   7320.5 Pune                         10
+        30 Education                                        105 Ganesh                    12000 Mumbai                       30
+
+-------------------------------------------------------------------------------------------------------------------------------
+FULL JOINT:
+select e.ename,e.deptno,d.dname from employee e FULL JOIN dept d ON e.deptno=d.deptno;
+
+
+ENAME                    DEPTNO DNAME
+-------------------- ---------- --------------------
+ram                          10 Testing
+krishna                      20 Dev
+ganesh                       40
+                                HR
+
+				OR
+
+ SELECT * FROM dept d FULL JOIN employee e ON d.deptno=e.deptno;
+
+    DEPTNO DNAME                LOC                       EMPID EMPNAME               EMPSALARY CITY                     DEPTNO
+---------- -------------------- -------------------- ---------- -------------------- ---------- -------------------- ----------
+        10 Design               Mumbai                      101 Ramesh                16295.433 Mumbai                       10
+        20 Production           Chakkan                     102 Amit                      20000 Chennai                      20
+        10 Design               Mumbai                      103 Suresh                   7320.5 Pune                         10
+        30 Education                                        105 Ganesh                    12000 Mumbai                       30
+        50 Quality Control      Pune
+
+------------------------------------------------------------------------------------------------------------------------------------
+CROSS JOINT:
+select * from employee,dept;
+
+
+     EMPNO ENAME                    SALARY     DEPTNO     DEPTNO DNAME                LOC
+---------- -------------------- ---------- ---------- ---------- -------------------- --------------------
+         1 ram                       10000         10         10 Testing              Mumbai
+         1 ram                       10000         10         20 Dev                  Pune
+         1 ram                       10000         10         50 HR                   Pune
+         5 krishna                   20000         20         10 Testing              Mumbai
+         5 krishna                   20000         20         20 Dev                  Pune
+         5 krishna                   20000         20         50 HR                   Pune
+         2 ganesh                    20000         40         10 Testing              Mumbai
+         2 ganesh                    20000         40         20 Dev                  Pune
+         2 ganesh                    20000         40         50 HR                   Pune
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+SELF JOINT:
+
+select * from employee a,employee b where a.empid=101 and a.deptno=b.deptno;
+
+     EMPID EMPNAME               EMPSALARY CITY                     DEPTNO      EMPID EMPNAME               EMPSALARY CITY                     DEPTNO
+---------- -------------------- ---------- -------------------- ---------- ---------- -------------------- ---------- -------------------- ----------
+       101 Ramesh                16295.433 Mumbai                       10        101 Ramesh                16295.433 Mumbai                       10
+       101 Ramesh                16295.433 Mumbai                       10        103 Suresh                   7320.5 Pune                         10
+
+select b.empname from employee a,employee b where a.empid=101 and a.deptno=b.deptno;
+
+EMPNAME
+--------------------
+Ramesh
+Suresh
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Subquery:
+
+select salary from employees where salary>(select avg(salary) from employees);
+
+
+    SALARY
+----------
+     24000
+     17000
+     17000
+      9000
+     12000
+      9000
+      8200
+      7700
+      7800
+      6900
+     11000
+     
+For subquery returning 1 value;
+select first_name,department_id from employees where department_id=(select department_id from departments where department_name='IT');
+
+FIRST_NAME           DEPARTMENT_ID
+-------------------- -------------
+Alexander                       60
+Bruce                           60
+David                           60
+Valli                           60
+Diana                           60
+
+For subquer returning 2 values:
+
+select first_name,department_id from employees where department_id in(select department_id from departments where department_id in(20,60));
+
+FIRST_NAME           DEPARTMENT_ID
+-------------------- -------------
+David                           60
+Bruce                           60
+Pat                             20
+Michael                         20
+Alexander                       60
+Diana                           60
+Valli                           60
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+ select * from employees where salary>=(select max(salary) from employees);
+
+EMPLOYEE_ID FIRST_NAME           LAST_NAME                 EMAIL                     PHONE_NUMBER         HIRE_DATE JOB_ID         SALARY COMMISSION_PCT MANAGER_ID DEPARTMENT_ID
+----------- -------------------- ------------------------- ------------------------- -------------------- --------- ---------- ---------- -------------- ---------- -------------
+        100 Steven               King                      SKING                     515.123.4567         17-JUN-87 AD_PRES         24000                                      90
+
+ select * from employees where salary>=all(select salary from employees);
+
+EMPLOYEE_ID FIRST_NAME           LAST_NAME                 EMAIL                     PHONE_NUMBER         HIRE_DATE JOB_ID         SALARY COMMISSION_PCT MANAGER_ID DEPARTMENT_ID
+----------- -------------------- ------------------------- ------------------------- -------------------- --------- ---------- ---------- -------------- ---------- -------------
+        100 Steven               King                      SKING                     515.123.4567         17-JUN-87 AD_PRES         24000                                      90
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

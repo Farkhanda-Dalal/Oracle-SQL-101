@@ -1,0 +1,552 @@
+DECLARE v_id number(4); =legal
+
+DECLARE v_x,v_y,v_z varchar2(10);
+v_x,v_y,v_z varchar2(10);
+   *
+ERROR at line 2:
+ORA-06550: line 2, column 4:
+PLS-00103: Encountered the symbol "," when expecting one of the following:
+constant exception <an identifier>
+<a double-quoted delimited-identifier> table LONG_ double ref
+char time timestamp interval date binary national character
+nchar
+ORA-06550: line 2, column 21:
+PLS-00103: Encountered the symbol "(" when expecting one of the following:
+, ; for group having intersect minus order start union where
+connect
+The symbol "having" was substituted for "(" to continue.
+
+DECLARE v_birthdate date not null;
+
+ERROR at line 2:
+ORA-06550: line 2, column 13:
+PLS-00218: a variable declared NOT NULL must have an initialization assignment
+ORA-06550: line 4, column 14:
+PLS-00382: expression is of wrong type
+ORA-06550: line 4, column 1:
+PL/SQL: Statement ignored
+
+DECLARE
+v_in_stock boolean:=1;
+BEGIN
+dbms_output.put_line(v_boolean);
+END;
+/
+
+ERROR at line 2:
+ORA-06550: line 2, column 21:
+PLS-00382: expression is of wrong type
+ORA-06550: line 2, column 12:
+PL/SQL: Item ignored
+ORA-06550: line 4, column 22:
+PLS-00201: identifier 'V_BOOLEAN' must be declared
+ORA-06550: line 4, column 1:
+PL/SQL: Statement ignored
+
+-------------------------------------------------------------------------------------------
+Q2 What is the ouput of this program?
+
+DECLARE
+
+v_data number (7);
+
+BEGIN
+
+dbms_output.put_line(v_data);
+
+END;
+/
+
+output:
+PL/SQL procedure successfully completed.
+because v_data was not assigned any value.
+
+---------------------------------------------------------------------------------------------
+Q3 What will be values of variables at point 1 and 2:
+
+DECLARE
+
+v_weight number (3):=600;
+v_message varchar2(25):='Product 10012';
+
+BEGIN
+
+	DECLARE
+
+	v_weight number (3):=1;
+	v_message varchar2(25):='Product 11001';
+	v_new_loc varchar2(25):='Europe';
+
+	BEGIN
+
+	v_weight:=v_weight+1;
+	v_new_loc:= 'Western' || v_new_loc;
+	--POINT 1--
+
+	END;
+
+v_weight:=v_weight+1;
+v_message:= v_message || 'is in stock';
+--POINT 2--
+
+END;
+/
+
+output:
+
+1.At point 1:
+v_weight=2
+v_message=Product 11001
+v_new_loc=WesternEurope
+
+2.At point 2:
+v_weight=601
+v_message=Product 10012 is in stock
+
+----------------------------------------------------------------------------------------------------------------------
+Q4 
+
+DECLARE
+
+n1 number;
+n2 number;
+n3 number;
+
+BEGIN
+
+n1:=&n1;
+n2:=&n2;
+
+n3:=(n1/n2)+n2;
+
+dbms_output.put_line('result='||n3);
+
+END;
+/
+
+output:
+result=7
+
+-------------------------------------------------------------------------------------------------------------------------
+Q5 
+
+DECLARE 
+
+max_salary float;
+min_salary float;
+sal employee.empsalary%type;
+dep employee.deptno%type;
+
+
+BEGIN
+ dep:=&dep;
+ select max(empsalary),min(empsalary) into max_salary,min_salary from employee where deptno=dep;
+ dbms_output.put_line('Max Salary in Dept:'||max_salary);
+ dbms_output.put_line('Min Salary in Dept:'||min_salary);
+END;
+/ 
+
+------------------------------------------------------------------------------------------------------------------------
+Q6
+
+DECLARE
+
+id employee.empid%type;
+sal employee.empsalary%type;
+
+BEGIN
+
+id:=&id;
+
+select empsalary INTO sal from employee where empid=id;
+
+dbms_output.put_line('salary='||sal);
+
+if sal<2500 then
+dbms_output.put_line('salary class=low');
+
+elsif sal>=2500 and sal<5000 then
+dbms_output.put_line('salary class=medium');
+
+elsif sal>=5000 then
+dbms_output.put_line('salary class=high');
+
+end if;
+
+END;
+/
+
+output:
+Enter value for id: 103
+old   8: id:=&id;
+new   8: id:=103;
+salary=5000
+salary class=high
+
+------------------------------------------------------------------------------------------------------------------------------------
+Q7 
+
+DECLARE
+
+m number;
+
+BEGIN
+
+m:=&m;
+
+if m=1 then dbms_output.put_line('january');
+elsif m=2 then dbms_output.put_line('february');
+elsif m=3 then dbms_output.put_line('march');
+elsif m=4 then dbms_output.put_line('april');
+elsif m=5 then dbms_output.put_line('may');
+elsif m=6 then dbms_output.put_line('june');
+elsif m=7 then dbms_output.put_line('july');
+elsif m=8 then dbms_output.put_line('august');
+elsif m=9 then dbms_output.put_line('september');
+elsif m=10 then dbms_output.put_line('october');
+elsif m=11 then dbms_output.put_line('november');
+elsif m=12 then dbms_output.put_line('december');
+else dbms_output.put_line('invalid month');
+
+end if;
+
+END;
+/
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Q8.a Factorial
+
+DECLARE
+
+r number;
+n number;
+
+BEGIN
+
+n:=&n;
+r:=1;
+
+for i in 1..n
+
+loop
+
+r:=r*i;
+
+end loop;
+
+dbms_output.put_line(r);
+
+END;
+
+/
+
+------------------------------------------------------------------------------------------------
+Q8.b Fibonacci Series:
+
+DECLARE
+
+n1 number;
+n2 number;
+add number;
+
+BEGIN
+
+n1:=&n1;
+n2:=&n2;
+
+for i in 1..5 
+
+loop
+
+add:=n1+n2;
+dbms_output.put_line(add);
+n1:=n2;
+n2:=add;
+
+END LOOP;
+
+END;
+
+/
+
+---------------------------------------------------------------------------------------------------
+Q8.c
+
+----------------------------------------------------------------------------------------------------
+Q8.d 
+
+DECLARE
+
+n number;
+b boolean;
+
+BEGIN
+b:=true;
+
+n:=&n;
+
+for i in 2..(n-1) 
+
+loop
+
+if (n mod i)=0 then
+b:=false;
+end if;
+
+end loop;
+
+if (b=false) then
+dbms_output.put_line('Not a prime number');
+else
+dbms_output.put_line('prime number');
+
+end if;
+
+END;
+
+/
+
+------------------------------------------------------------------------------------------------------------
+Q8.e
+
+DECLARE 
+
+n number(3);
+j number(3);
+counter number (3);
+
+BEGIN
+
+n:=&n;
+
+for i in 1..n
+
+loop
+
+counter:=0;
+
+  for j in 1..n
+
+    loop
+
+    if (i mod j)=0 then
+      counter:=counter+1;
+    end if;
+
+   end loop;
+
+if counter<=2 then
+dbms_output.put_line(i);
+end if;
+
+end loop;
+
+END;
+/
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Q9
+
+DECLARE
+
+eid employee.empid%type;
+enm employee.empname%type;
+dep dept.deptno%type;
+dnm dept.dname%type;
+
+BEGIN
+
+eid:=&eid;
+
+select e.empid,e.empname,d.deptno,d.dname INTO eid,enm,dep,dnm from employee e inner join dept d on e.deptno=d.deptno where empid=eid;
+
+dbms_output.put_line('Employee ID  :'||eid);
+dbms_output.put_line('Employee Name  :'||enm);
+dbms_output.put_line('Department No  :'||dep);
+dbms_output.put_line('Department Name:'||dnm);
+END;
+/
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Q10
+
+DECLARE
+
+dep dept.deptno%type;
+
+BEGIN
+
+select deptno INTO dep from dept where deptno=(select max(deptno) from dept);
+
+dep:=dep+1;
+
+dbms_output.put_line(dep);
+
+insert into dept values(dep,'Education',null);
+
+END;
+/
+
+-------------------------------------------------------------------------------------
+
+DECLARE
+
+n1 number;
+n2 number;
+add number;
+last number;
+
+BEGIN
+
+n1:=&n1;
+n2:=&n2;
+last:=&last;
+
+loop
+exit when add<last;
+
+add:=n1+n2;
+dbms_output.put_line(add);
+n1:=n2;
+n2:=add;
+
+END LOOP;
+
+END;
+
+/
+
+
+DECLARE
+
+n1 number;
+n2 number;
+add number;
+last number;
+
+BEGIN
+
+n1:=&n1;
+n2:=&n2;
+last:=&last;
+
+
+for i in 1..5 
+
+loop
+
+add:=n1+n2;
+dbms_output.put_line(add);
+n1:=n2;
+n2:=add;
+
+END LOOP;
+
+END;
+
+/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

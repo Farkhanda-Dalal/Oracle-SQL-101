@@ -1,0 +1,250 @@
+Q1 list books written by Loni that cost less than 600:
+select author_name,cost from books where author_name='Loni' and cost<600;
+
+output:
+AUTHOR_NAME                          COST
+------------------------------ ----------
+Loni                                  550
+Loni                                  300
+
+-------------------------------------------------------------------------------------------------
+Q2 list issue details of books not returned:
+select * from issue where return_date is null;
+
+output:
+LIB_ISSUE_ID    BOOK_NO  MEMBER_ID ISSUE_DAT RETURN_DA
+------------ ---------- ---------- --------- ---------
+        7001        101          1 10-DEC-06
+        7002        102          2 25-DEC-06
+        7003        104          1 15-DEC-06
+        7006        101          2 18-FEB-06
+
+------------------------------------------------------------------------------------------------
+Q3 update return_date to 31-Dec-2006 except for 7005 and 7006:
+update issue set return_date='31-Dec-2006' where lib_issue_id between 7001 and 7004;
+
+output:
+LIB_ISSUE_ID    BOOK_NO  MEMBER_ID ISSUE_DAT RETURN_DA
+------------ ---------- ---------- --------- ---------
+        7001        101          1 10-DEC-06 31-DEC-06
+        7002        102          2 25-DEC-06 31-DEC-06
+        7003        104          1 15-DEC-06 31-DEC-06
+        7004        101          1 04-JUL-06 31-DEC-06
+        7005        104          2 15-NOV-06 30-NOV-06
+        7006        101          2 18-FEB-06
+
+-----------------------------------------------------------------------------------------------
+Q4 list issue details that have books issued for more than 30 days:
+select * from issue where return_date-issue_date>30;
+
+output:
+LIB_ISSUE_ID    BOOK_NO  MEMBER_ID ISSUE_DAT RETURN_DA
+------------ ---------- ---------- --------- ---------
+        7004        101          1 04-JUL-06 31-DEC-06
+
+------------------------------------------------------------------------------------------------
+Q5 list books which have category database and cost between 500 and 750
+select book_name,cost,category from books where cost>=500 and cost<=750 and category='Database';
+
+output:
+BOOK_NAME                            COST CATEGORY
+------------------------------ ---------- ----------
+Oracle-Complete Ref                   550 Database
+PL SQL-Ref                            750 Database
+
+-------------------------------------------------------------------------------------------------
+Q6 list books that belong to the folloowing categories database,fiction,science,management:
+select book_name,category from books where category in('Science','Management','Fiction','Database');
+
+output:
+BOOK_NAME                      CATEGORY
+------------------------------ ----------
+Oracle-Complete Ref            Database
+PL SQL-Ref                     Database
+
+-------------------------------------------------------------------------------------------------
+Q7 list all members in descending order of penalty:
+select member_name,penalty_amount from member1 order by penalty_amount desc;
+
+output:MEMBER_NAME                              PENALTY_AMOUNT
+---------------------------------------- --------------
+Farkhanda                                           100
+Garima Sen                                          100
+Richa Sharma                                         50
+Aarti                                                30
+Ankita                                                0
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q8 list books in acsending order of category and descending order of price:
+select book_name,category,cost from books order by category,cost desc;
+
+output:
+BOOK_NAME                      CATEGORY         COST
+------------------------------ ---------- ----------
+PL SQL-Ref                     Database          750
+Oracle-Complete Ref            Database          550
+Let us C                       System            450
+Mastering SQL                  rdbms             300
+far
+
+-------------------------------------------------------------------------------------------------------------
+Q9  list all books whose name contains SQL:
+select book_name from books where book_name like '%SQL%';
+
+output:
+BOOK_NAME
+------------------------------
+Mastering SQL
+PL SQL-Ref
+
+--------------------------------------------------------------------------------------------------------------
+Q10 list all member names which start with R or G and contain I in it:
+select member_name from member1 where member_name like 'R%' and member_name like '%i%' or member_name like 'G%' and member_name like '%i%';
+
+output:
+MEMBER_NAME
+----------------------------------------
+Richa Sharma
+Garima Sen
+
+-----------------------------------------------------------------------------------------------------------------
+Q11 List book name in initcap and author name in uppercase in desending order of book name:
+select initcap(book_name),upper(author_name) from books order by book_name desc;
+
+output:
+
+INITCAP(BOOK_NAME)             UPPER(AUTHOR_NAME)
+------------------------------ ------------------------------
+Far
+Pl Sql-Ref                     SCOTT URMAN
+Oracle-Complete Ref            LONI
+Mastering Sql                  LONI
+Let Us C                       DENIS RITCHIE
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+Q12 List all books issued by member 101 in format of 'Monday','July',10,'2006':
+select to_char(issue_date,'day-month-dd-yyyy'),to_char(issue_date,'day-month-dd-yyyy') from issue where member_id=101;
+member_id=101 does not exsist;
+
+select to_char(issue_date,'day-month-dd-yyyy')"Issue Date",to_char(issue_date,'day-month-dd-yyyy')"Return Date" from issue where member_id=1;
+output:
+Issue Date                  Return Date
+--------------------------- ---------------------------
+sunday   -december -10-2006 sunday   -december -10-2006
+friday   -december -15-2006 friday   -december -15-2006
+tuesday  -july     -04-2006 tuesday  -july     -04-2006
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q14 list all members taht became member is year 2006:
+select lib_issue_id,issue_date from issue where issue_date like '%-06';
+
+output:
+
+LIB_ISSUE_ID ISSUE_DAT
+------------ ---------
+        7001 10-DEC-06
+        7002 25-DEC-06
+        7003 15-DEC-06
+        7004 04-JUL-06
+        7005 15-NOV-06
+        7006 18-FEB-06
+
+---------------------------------------------------------------------------------------------------------------------
+Q15
+select days_between(return_date,issue_date) as "No of days issued for" from dual;
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q16 display data of library members in order of their joining date:
+select * from issue order by issue_date;
+
+output:
+
+
+LIB_ISSUE_ID    BOOK_NO  MEMBER_ID ISSUE_DAT RETURN_DA
+------------ ---------- ---------- --------- ---------
+        7006        101          2 18-FEB-06
+        7004        101          1 04-JUL-06 31-DEC-06
+        7005        104          2 15-NOV-06 30-NOV-06
+        7001        101          1 10-DEC-06 31-DEC-06
+        7003        104          1 15-DEC-06 31-DEC-06
+        7002        102          2 25-DEC-06 31-DEC-06
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q17 Show no of books issued by member_id=1:
+
+select count(issue_date) from issue where member_id=1;
+
+output:
+COUNT(ISSUE_DATE)
+-----------------
+                3
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q18 Show total penalty due for all member:
+select member_id,penalty_amount from member;
+
+output:
+
+ MEMBER_ID PENALTY_AMOUNT
+---------- --------------
+       101            100
+       102             30
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q19 Display total number of members:
+
+select count(distinct (member_id)) from issue;
+
+output:
+
+COUNT(DISTINCT(MEMBER_ID))
+--------------------------
+                         2
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q20 Display total number of books issued:
+
+select count(book_no) from issue;
+
+output:
+
+COUNT(BOOK_NO)
+--------------
+             6
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q21 Display average membership fees paid by members:
+
+select avg(fess_paid) from member;
+
+AVG(FESS_PAID)
+--------------
+           525
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q22 Display total no of months between return and issue date:
+select ((return_date-issue_date)/30) "months before return" from issue;
+
+output:
+
+months befrore return
+---------------------
+                   .7
+                   .2
+           .533333333
+                    6
+                   .5
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q23 Display length of member name:
+select member_name,length(member_name) from member;
+
+output:
+
+MEMBER_NAME                                        LENGTH(MEMBER_NAME)
+-------------------------------------------------- -------------------
+Farkhanda                                                            9
+Aarti                                                                5
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+

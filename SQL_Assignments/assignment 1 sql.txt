@@ -1,0 +1,366 @@
+Q1 Create tables:
+
+create table member2
+(
+Member_Id number(5) constraint member1_Member_Id_pk5 primary key,
+Member_Name varchar2(50) not null,
+Member_address varchar2(50),
+Acc_Open_Date date check(Acc_Open_Date>'01-Jan-1990'),
+Membership_type varchar2(20) check (Membership_type in ('Lifetime','Annual','Half Yearly','Quaterly')),
+Fees_paid number(4),
+Max_Books_Allowed number(2) check(Max_Books_Allowed<=20),
+Penalty_Amount number(7,2)
+);
+
+create table books
+(
+Member_Id number(5) references member1(Member_Id),
+Book_No number(6) constraint books_Book_No_pk primary key,
+Book_Name varchar2(30) not null,
+Author_Name varchar2(30),
+Cost number(7,2),
+Category varchar2(10)
+);
+
+create table Lib_issue
+(
+Lib_Issue_Id number(10),
+Book_No number(6) references books(Book_No),
+Member_Id number(5) references member1(Member_Id),
+Issue_Date date check(Issue_Date>'01-Jan-1990'),
+Return_Date date 
+);
+
+-----------------------------------------------------------------------------------------------------------------------
+Q2- View structure of tables:
+
+desc member1;
+desc books;
+desc issue;
+
+-----------------------------------------------------------------------------------------------------------------
+Q3 Drop member table:
+drop table issue;
+drop table books;
+drop table member1;
+
+------------------------------------------------------------------------------------------------------------------
+Q4 create table member1
+(
+Member_Id number(5) constraint member1_Member_Id_pk9 primary key,
+Member_Name varchar2(50) not null,
+Member_address varchar2(50),
+Acc_Open_Date date check(Acc_Open_Date>'01-Jan-1990'),
+Membership_type varchar2(20),
+Fees_paid number(4),
+Max_Books_Allowed number(2) check(Max_Books_Allowed<=20),
+Penalty_Amount number(7,2)
+);
+
+
+-----------------------------------------------------------------------------------------------------------------
+Q5 Make width of Member_Name 30 chars
+
+alter table member1 modify(Member_Name char(30));
+
+------------------------------------------------------------------------------------------------------------------
+Q6 Add column Reference of 30 chars to Issue Table:
+alter table issue add(Reference char(30));
+
+-------------------------------------------------------------------------------------------------------------------
+Q7 Delete Reference column from Issue Table:
+alter table issue drop column Reference;
+
+-------------------------------------------------------------------------------------------------------------------
+Q8 Rename table issue to Lib_Issue
+
+alter table Lib_issue rename to issue;
+
+--------------------------------------------------------------------------------------------------------------------
+Q9 Insert given data in member1 table:
+
+alter table member1 modify(Fees_Paid number(6));
+insert into member1 values(1,'Richa Sharma','Pune','10-Dec-2005','Lifetime',250000,5,50);
+insert into member1 values(2,'Garima Sen','Pune',sysdate,'Annual',1000,3,Null);
+
+---------------------------------------------------------------------------------------------------------------------
+Q10 Enter atleast 5 records and save it:
+
+insert into member1 values(101,'Farkhanda','348_Ghorpade_Peth','10-Feb-2003','Annual',1000,6,100);
+insert into member1 values(102,'Aarti','Karve Nagar','19-March-2010','Quarterly',50,5,30);
+insert into member1 values(104,'Ankita','Rasta Peth','13-Dec-2022','Lifetime',5000,110,0);
+
+insert into books values(101,201,'Fault in our stars','John Green',600,'Fiction');
+insert into books values(102,202,'13 Reasons Why','Farkhanda',600,'Mystery');
+
+insert into Lib_issue values(11,201,101,'02-Jan-1990','08-Jan-1990');
+insert into Lib_issue values(12,202,103,'02-Jan-1990','08-Jan-1990');
+
+--------------------------------------------------------------------------------------------------------------------------
+Q11 Decrease width of Member_Name to 20 chars.if it doesnt happen state why
+
+alter table member1 modify(Member_Name char(30));
+error shown-cannot decrease column lenght because some value is too big
+reason-size of varchar and char cannot be decrease.
+
+--------------------------------------------------------------------------------------------------------------------------
+Q12 add record with max_books allowed 100:
+wont allow to add this record 
+error shown-value larger than specified precision for this column
+reason-precision for max_books_allowed number(2)
+
+-------------------------------------------------------------------------------------------------------------------------------
+Q13 create member101
+(
+Member_Id number(5) ,
+Member_Name varchar2(50) ,
+Member_address varchar2(50),
+Acc_Open_Date date,
+Membership_type varchar2(20),
+Fees_paid number(4),
+Max_Books_Allowed number(2) ,
+Penalty_Amount number(7,2)
+);
+
+-------------------------------------------------------------------------------------------------------------------------------
+Q14 add constraint in member101
+alter table member101 add check(Max_Books_Allowed<100);
+alter table member101 add check(Penalty_Amount<1000);
+
+---------------------------------------------------------------------------------------------------------------------------------
+Q15 drop table of books
+drop table issue;
+drop table books;
+
+---------------------------------------------------------------------------------------------------------------------------------
+Q16 create table books with constraints
+create table books
+(
+Book_No number(6) constraint books_Book_No_pk primary key,
+Book_Name varchar2(30) not null,
+Author_Name varchar2(30),
+Cost number(7,2),
+Category varchar2(10)
+);
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Q17 insert given data:
+insert into books values(101,'Let us C','Denis Ritchie',450,'System');
+insert into books values(102,'Oracle-Complete Ref','Loni',550,'Database');
+insert into books values(103,'Mastering SQL','Loni',250,'Database');
+insert into books values(104,'PL SQL-Ref','Scott Urman',750,'Database');
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Q18 and operator:
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Q19 create table book101 with same structure as books with no data in it:
+create table book101
+(
+Book_No number(6) constraint books_Book_No_pk1 primary key,
+Book_Name varchar2(30) not null,
+Author_Name varchar2(30),
+Cost number(7,2),
+Category varchar2(10)
+);
+
+---------------------------------------------------------------------------------------------------------------------------------------
+Q20 copy all data from books to book101 table using select command:
+insert into book101 copy(select * from books);
+
+----------------------------------------------------------------------------------------------------------------------------------
+Q21 save all data so far inserted:
+commit;
+
+---------------------------------------------------------------------------------------------------------------------------------
+Q22 view data in all table:
+select * from member1;
+select * from books;
+select * from books101;
+select * from member101;
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Q23 insert given data to books:
+delete from books where book_no=101; because 101 already exists
+insert into books values(101,'National Geography','Adis Ross',1000,'Science');
+
+---------------------------------------------------------------------------------------------------------------------------------------
+Q24 undo the last changes:
+rollback;
+
+------------------------------------------------------------------------------------------------------------------------------------
+Q25 modify price of book with id 103 to rs 300 and category to rdbms:
+update books set cost=300,category='rdbms' where book_id=103;
+
+--------------------------------------------------------------------------------------------------------------------------------
+Q26 rename table Lib_issue to issue:
+alter table Lib_issue rename to issue;
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Q27 drop table issue:
+drop table issue;
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Q28 create table issue
+(
+Lib_Issue_Id number(5) constraint issue_Lib_Issue_Id_pk11 primary key,
+book_no number(5),
+member_id number(5),
+issue_date date,
+return_date date,
+constraint chk check(issue_date<return_date)
+);
+
+alter table issue add constraint fk_book_no foreign key (book_no) references books(book_no);
+alter table issue add constraint fk_member_id foreign key (member_id) references member1(member_id);
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+Q29 insert given data in issue table.leave return_date blank:
+create sequence Lib_Issue_Id1
+start with 7001
+increment by 1
+maxvalue 7010
+nocache
+nocycle;
+
+insert into issue values(Lib_Issue_Id1.nextval,101,1,'10-Dec-06',null);
+insert into issue values(Lib_Issue_Id1.nextval,102,2,'25-Dec-06',null);
+insert into issue values(Lib_Issue_Id1.nextval,104,1,'15-Dec-06',null);
+insert into issue values(Lib_Issue_Id1.nextval,101,1,'04-July-06',null);
+insert into issue values(Lib_Issue_Id1.nextval,104,2,'15-Nov-06',null);
+insert into issue values(Lib_Issue_Id1.nextval,101,2,'18-Feb-06',null);
+
+or 
+
+insert into issue values(7001,101,1,'10-Dec-06',null);
+insert into issue values(7002,102,2,'25-Dec-06',null);
+insert into issue values(7003,104,1,'15-Dec-06',null);
+insert into issue values(7004,101,1,'04-July-06',null);
+insert into issue values(7005,104,2,'15-Nov-06',null);
+insert into issue values(7006,101,2,'18-Feb-06',null);
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Q30 save the data:
+commit;
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+Q31 disable constraints on issue table:
+alter table issue disable constraint issue_Lib_Issue_Id_pk11;
+alter table issue disable constraint fk_book_no;
+alter table issue disable constraint fk_member_id;
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Q32 add record by violating fk_member_id:
+insert into issue values(7007,101,3,'10-Dec-06',null);
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+Q33 enable constaraint of issue table and obserev error:
+alter table issue enable constraint issue_Lib_Issue_Id_pk11;
+alter table issue enable constraint fk_book_no;
+alter table issue enable constraint fk_member_id;
+
+error:cannot validate (SYSTEM.FK_MEMBER_ID) - parent keys not found
+
+------------------------------------------------------------------------------------------------------------------------------------------
+Q34 Delete record created in Q32 and enable constarints:
+delete from issue where member_id=3;
+
+alter table issue enable constraint issue_Lib_Issue_Id_pk11;
+alter table issue enable constraint fk_book_no;
+alter table issue enable constraint fk_member_id;
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Q35 try to delete of member_id 1 in member1 table and observe error:
+
+delete from member1 where member_id=1;
+
+error: integrity constraint (SYSTEM.FK_MEMBER_ID) violated - child record found
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+Q36 modify return date of 7004 and 7005:
+
+update issue set return_date='19-July-06' where Lib_Issue_Id=7004;
+update issue set return_date='30-Nov-06' where Lib_Issue_Id=7005;
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+Q37 modify penalty where name is garima sen:
+update member1 set penalty_amount=100 where member_name='Garima Sen';
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Q38 perform savepoint x:
+savepoint x;
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+Q39 delete records from issue where member_id is 1 and issue_date is before 10-Dec-06:
+delete from issue where member_id=1 and issue_date<'10-Dec-06';
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Q40 delete records from books where category is not rdbms or database:
+delete from books where category='System';
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Q41 UNDO CHANGES DONE AFTER SAVEPOINT X:
+rollback to savepoint x;
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Q42 save all changes till savepoint x:
+commit;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Q43 remove table member101:
+drop table member101;
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Q44 remove table book101:
+drop table book101;
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Q45 view data and structure of tables member1,books,issue:
+desc member1;
+select * from member1;
+desc books;
+select * from books;
+desc issue;
+select * from issue;
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+Q46 create sequences no_seq with numbers starting with 100 ending with 200:
+create sequence no_seq
+start with 100
+increment by 1
+maxvalue 200;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q47 drop no_seq:
+drop sequence no_seq;
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+Q48 create sequence book_seq from 101 to 1000 incremented by 1 and without cycle:
+create sequence book_seq
+start with 101
+increment by 1
+maxvalue 1000
+nocache
+nocycle;
+
+Q49 create sequence member_seq from 1 to 100 incremented 1 and without cycle:
+create sequence member_seq
+start with 1
+increment by 1
+maxvalue 100
+nocache
+nocycle;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q50 drop above created sequences:
+drop sequence book_seq;
+drop sequence member_seq;
+
+===========================================================================END=========================================================================================
+
+
+
+
+
+

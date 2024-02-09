@@ -1,0 +1,1212 @@
+DBMS:
+DBMS stands for Data Base Management System.
+
+A database is a collection of different types of information or data. A database can be extremely vast and it needs to be constantly maintained and managed.To fulfill this requirement softwares named Data Base Management System are used.DBMS is used to get,insert,delete and alter data.
+There are different types of DMBS like MySQL,SQL Server,Oracle,etc.We are going to use Oracle to manage database in this course.
+
+======================================================================================================================================================================
+SQL:
+SQL stands for Structured Query Language. 
+
+It is the language used to comminucate with the DBMS.Just like we use a language like English or Hindi to communicate to humans,we use Structured Query Language to communicate with the DBMS.Once the DBMS is installed in youur system, you can use SQL to give commands in the DBMS. With the help of SQL we can give Commands such as Create, Alter, Insert, Drop, Delete, Update,etc to the DBMS.
+
+DDL:
+
+DDL stands for Data Defination Language. It is the most important SQL command beacuse it is responsible for creation and modification of database and its objects,without it database cannot exist. It is used for defining and altering the structure or schema of table,view or database.DDL commands are auto-commited ie they get automatically saved when they are successfully executed and they cannot be rolled back.
+
+DDL Commands are as follows:
+     1.	Create
+     2.	Alter
+     3.	Rename
+     4.	Drop
+     5.	Truncate
+
+Create:
+
+Create Command is used for the creation of database,table,view,sequence,index,etc. It is used to form the schema of these database objects.
+
+This is how Create Command is used in SQL Queries:
+==================================================================================================
+i.	To create Table:
+
+        Syntax:
+        CREATE TABLE table_name
+        (
+        col_name1 data_type (size of column)  CONSTRAINT pk_id PRIMARY KEY,
+        col_name2 data_type (size of column),
+        col_name3 data_type (size of column)
+        );
+
+        Example:
+        CREATE TABLE machine
+        (
+        id number(5) CONSTRAINT pk_id1 PRIMARY KEY,
+        name varchar2(20) ,
+        CONSTRAINT fk_name FOREIGN KEY(name) REFERENCES appliance(a_name)
+        );
+
+        Output:
+        Table created.
+
+==================================================================================================
+ii.	To create Table using another table's schema:
+         
+        Syntax:
+        CREATE TABLE table_name AS SELECT * FROM table_name;
+
+        Example:
+        CREATE TABLE machine1 AS SELECT * FROM machine;
+
+        Output:
+        Table created.
+
+==================================================================================================
+iii.	To create Index:
+
+        Syntax:
+        CREATE INDEX index_name
+        ON table_name (col1_name,col2_name....coln_name);
+
+        Example:
+        CREATE INDEX index1
+        ON departments(department_id,department_name);
+
+        Output:
+        Index created.
+
+==================================================================
+iv.	To create Sequence:
+
+        Syntax:
+        CREATE SEQUENCE seq_name
+        start with val
+        increment by val
+        minvalue val
+        maxvalue val
+        nocache
+        nocycle;
+
+        Example:
+        CREATE SEQUENCE demo_seq
+        start with 10
+        increment by 1
+        minvalue 5
+        maxvalue 15
+        nocache
+        nocycle;
+
+        Output:
+        Sequence created.
+
+==================================================================
+v.	To create View:
+
+	Syntax:
+	CREATE VIEW view_name AS
+	SELECT col1_name,col2_name....coln_name
+	FROM table_name
+	WHERE condition;
+
+	Example:
+	CREATE VIEW dept1 AS
+	SELECT department_id,department_name
+	FROM departments
+	WHERE rownum<11;
+
+	Output:
+	          DEPARTMENT_ID      DEPARTMENT_NAME
+	-------------------------------------------------------------
+          		280 		Quality Control
+          		290 		Design
+          		300 		Billing
+         		310 		Sales
+           		10 		Administration
+           		20 		Marketing
+           		30 		Purchasing
+           		40 		Human Resources
+           		50 		Shipping
+           		60 		IT
+Alter:
+
+The Alter Command is used to modify the schema of the table made using the Create Command. It targets the columns for modifying the schema or structure of the table. Various aspects of the table's column such name,datatype size, constraints on the column,etc can be altered using the Alter Command.
+
+This is how the Alter Command is used in SQL Queries:
+===================================================================================================
+
+i.To add a column:
+
+Syntax:
+ALTER TABLE table_name ADD (col_name datatype(datatype_size);
+
+Example:
+ALTER TABLE departments ADD (HOD varchar2(30));
+
+Output:
+
+Columns in the table before Alter:
+DEPARTMENT_ID     DEPARTMENT_NAME     MANAGER_ID      LOCATION_ID      
+
+Columns in the table after Alter:
+DEPARTMENT_ID     DEPARTMENT_NAME     MANAGER_ID      LOCATION_ID      HOD
+
+===================================================================================================
+ii.To remove a column:
+
+Syntax:
+ALTER TABLE table_name DROP COLUMN col_name ;
+
+Example:
+ ALTER TABLE departments  DROP COLUMN HOD;
+
+Output:
+
+Columns in the table before Alter:
+DEPARTMENT_ID     DEPARTMENT_NAME     MANAGER_ID      LOCATION_ID      HOD
+
+Columns in the table after Alter:
+DEPARTMENT_ID     DEPARTMENT_NAME     MANAGER_ID      LOCATION_ID  
+    
+===================================================================================================
+iii. To modify datatype size of a column:
+
+Syntax:
+ALTER TABLE table_name MODIFY (col_name datatype(new size));
+
+Example:
+ALTER TABLE departments  MODIFY (department_id number(6));
+
+Output:
+
+Before Alter:
+DEPARTMENT_ID     NOT NULL     NUMBER(4)
+
+After Alter:
+DEPARTMENT_ID     NOT NULL     NUMBER(6)
+
+===================================================================================================
+iv. To rename column:
+
+Syntax:
+ALTER TABLE table_name RENAME COLUMN col_name to new_col_name;
+
+Example:
+ALTER TABLE departments  RENAME COLUMN department_id to department_no;
+
+Output:
+
+Before Alter:
+DEPARTMENT_ID     DEPARTMENT_NAME     MANAGER_ID     LOCATION_ID
+
+After Alter:
+DEPARTMENT_NO     DEPARTMENT_NAME     MANAGER_ID     LOCATION_ID
+
+===================================================================================================
+v. To temprorily disable constarint on  column:
+
+Syntax:
+ALTER TABLE table_name DISABLE CONSTARINT constarint_id;
+
+Example:
+ALTER TABLE machine DISABLE CONSTRAINT fk_name;
+
+Output:
+Table altered.
+
+===================================================================================================
+iv. To temprorily enable constarint on  column:	
+	
+Syntax:
+ALTER TABLE table_name ENABLE CONSTARINT constarint_id;
+
+Example:
+ALTER TABLE machine ENABLE CONSTRAINT fk_name;
+
+Output:
+Table altered.
+
+===================================================================================================
+iiv. To permanently drop constarint on  column:
+		
+Syntax:
+ALTER TABLE table_name DROP CONSTARINT constarint_id;
+
+Example:
+ALTER TABLE machine DROP CONSTRAINT fk_name;
+
+Output:
+Table altered.
+
+===================================================================================================
+Rename:
+
+The Rename Command is used to change the name of a table. It can also be used to change the name of columns but the rename command must be used in combination with the alter command for this purpose.
+
+This is how Rename Command is used in SQL Queries:
+============================================================================================
+i.To Rename the table:
+
+Syntax:
+RENAME table_name TO new_table_name;
+
+Example:
+RENAME machine TO machine101;
+
+Output:
+Table altered.
+
+============================================================================================
+ii. To rename column:
+
+Syntax:
+ALTER TABLE table_name RENAME COLUMN col_name to new_col_name;
+
+Example:
+ALTER TABLE departments  RENAME COLUMN department_id to department_no;
+
+Output:
+
+Before Alter:
+DEPARTMENT_ID     DEPARTMENT_NAME     MANAGER_ID     LOCATION_ID
+
+After Alter:
+DEPARTMENT_NO     DEPARTMENT_NAME     MANAGER_ID     LOCATION_ID
+============================================================================================
+Truncate:
+
+The Truncate command is used to delete all the data from a table. The Truncate Command targets the rows in a table. All the rows in the table are permanently deleted after the Truncate Command is executed on it.Truncate cannot be undone and once the rows are gone they cannot be rolled back again.
+
+This is how Truncate Command is used SQL Queries:
+===================================================================================
+i. To Delete all rows in a table:
+
+Syntax:
+TRUNCATE TABLE table_name;
+
+Example:
+TRUNCATE TABLE machine101;
+
+Output:
+Table truncated.
+===================================================================================
+Drop:
+
+While Truncate Command only deletes the entire data in the table, Drop Command deletes the data as well as the defination i.e. the schema of the table. Drop cannot be rolled back, so once the Drop Command is executed on a table, its data and defination is deleted forever.
+
+Drop Command can similarly used to delete the defination of Sequences,Views,Indexes and other data members.
+
+This is how Drop Command is used in SQL Queries:
+===================================================================================
+i. To Drop Table:
+
+Syntax:
+DROP TABLE table_name;
+
+Example:
+DROP TABLE machine101;
+
+Output:
+Table dropped.
+
+===================================================================================
+ii. To Drop Sequence:
+
+Syntax:
+DROP SEQUENCE seq_name;
+
+Example:
+DROP  SEQUENCE demo_seq;
+
+Output:
+Sequence dropped.
+
+===================================================================================
+iii. To Drop Index:
+
+Syntax:
+DROP INDEX index_name ON table_name;
+
+Example:
+DROP INDEX index1;
+
+Output:
+Index dropped.
+
+========================================================================
+iv. To Drop View:
+
+Syntax:
+DROP VIEW view_name;
+
+Example:
+DROP VIEW dept1;
+
+Output:
+View dropped.
+===================================================================================
+DQL stands for Data Query Language. Its function is to fetch the desired data as per the condition given by the WHERE Clause.
+
+DQL Commands are as follows:
+1.	Select:
+	It is used to select the record that match the WHERE Clause and are within the 	specified limit of the 
+        query being executed.
+
+This is how Select command is used in SQL queries:
+========================================================================
+i. To view data in all columns:
+
+Snytax:
+SELECT * FROM table_name;
+
+Example:
+SELECT * FROM departments;
+
+Output:
+DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+------------- ------------------------------ ---------- -----------
+           10 Administration                        200        1700
+           20 Marketing                             201        1800
+           30 Purchasing                            114        1700
+           40 Human Resources                       203        2400
+           50 Shipping                              121        1500
+           60 IT                                    103        1400
+           70 Public Relations                      204        2700
+          280 Quality Control                       101        1700
+          290 Design                                101
+          300 Billing
+          310 Sales                                 102        2500
+
+========================================================================
+ii. To view data in specific columns:
+
+Snytax:
+SELECT col1_name,col2_name FROM table_name;
+
+Example:
+SELECT department_id,department_name FROM departments;
+
+Output:
+DEPARTMENT_NO DEPARTMENT_NAME
+------------- ------------------------------
+           10 Administration
+           20 Marketing
+           30 Purchasing
+           40 Human Resources
+           50 Shipping
+           60 IT
+           70 Public Relations
+          280 Quality Control
+          290 Design
+          300 Billing
+          310 Sales
+
+=====================================================================
+iii. To view unrepeated data:
+
+Syntax:
+SELECT DISTINCT(col_name) FROM table_name;
+
+Example:
+SELECT DISTINCT(location_id) FROM departments;
+
+Output:
+LOCATION_ID
+----------------------
+       1800
+       2400
+       1400
+       2500
+       1700
+       2700
+       1500
+
+=====================================================================
+ iv. To view record where value in a certain column is left empty:
+
+Syntax:
+SELECT * FROM table_name WHERE col_name IS NULL;
+
+Example:
+SELECT * FROM departments WHERE manager_id IS NULL;
+
+Output:
+DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+------------- ------------------------------ ---------- -----------
+          300 Billing
+
+=====================================================================
+  v.  	To view record within specified range:
+ ====================================================================
+        a. Using IN operator:
+
+	Syntax:
+	SELECT * FROM table_name WHERE col_name IN(va1,val2);
+
+	Example:
+	SELECT * FROM departments WHERE department_id IN(10,50);
+
+	Output:
+        DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+        ------------- ------------------------------ ---------- -----------
+           10 Administration                        200        1700
+           50 Shipping                              121        1500
+===============================================================
+         b. Using BETWEEN operator:
+
+	 Syntax:
+	 SELECT * FROM table_name WHERE col_name BETWEEN val1 and val2;
+
+	 Example:
+	 SELECT * FROM departments WHERE department_id BETWEEN 10 and 50;
+
+	 Output:
+         DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+          ------------- ------------------------------ ---------- -----------
+           10 Administration                        200        1700
+           20 Marketing                             201        1800
+           30 Purchasing                            114        1700
+           40 Human Resources                       203        2400
+           50 Shipping                              121        1500
+===============================================================
+         c. Using < and > operator:
+
+		Syntax:
+		SELECT * FROM table_name WHERE col_name BETWEEN col_name>=val1 and 
+                col_name<=val2;
+
+		Example:
+		SELECT * FROM departments WHERE department_id>=10 and 				 
+                department_id<=50;
+
+		Output:
+                DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+                ------------- ------------------------------ ---------- -----------
+               10 Administration                        200        1700
+               20 Marketing                             201        1800
+               30 Purchasing                            114        1700
+               40 Human Resources                       203        2400
+               50 Shipping                              121        1500
+
+========================================================================
+
+DML:
+
+DML stands for Data Manipulation Language.It is used to modify or manipulate existing data in the database. DML commands are necessary to make any kind of changes in the existing database,without them data cannot be modified. Unlike DDL commands, DML commands are not auto-commited i.e they can be rolled back.
+
+DML Commands are as follows:
+1.	Insert
+2.	Update
+3.	Delete
+
+1.   Insert:
+The Insert statement is used to insert data in the table after the table is created.Insert statement is essential for creating rows in a table.Insert command can be executed only once for each row.
+This is how Insert statement is used in SQL queries:
+========================================================================
+i.  To Insert data in all columns:
+
+Snytax:
+INSERT INTO table_name VALUES(col1_val,col2_val,col3val....coln_val);
+
+Example:
+INSERT INTO departments VALUES(280,'Quality Control',101,1700);
+
+Output:
+1 row created.
+
+DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+------------- ------------------------------ ---------- -----------
+          280 Quality Control                       101        1700
+
+NOTE:
+
+Errors that may occur while writing Insert statement in SQL query for all columns:
+If the no. of values entered in while writing Insert query is not equal to the no. of columns in the 
+table then SQL will not allow the query to be executed  and the following error will  be shown:
+SQL> INSERT INTO departments VALUES(300,'Design',101);
+INSERT INTO departments VALUES(300,'Design',101)
+                                              *
+ERROR at line 1:
+ORA-00947: not enough values
+To solve this problem:
+If you want to leave a column empty while inserting thes values you need to write null in  the place where the value was expected.
+
+Snytax:
+INSERT INTO table_name VALUES(col1_val,col2_val,null....coln_val);
+
+Example:
+INSERT INTO departments VALUES(290,'Design',101,null);
+
+Output:
+1 row created.
+DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+------------- ------------------------------ ---------- -----------
+          290 Design                                101
+
+========================================================================
+ii.  To Insert data in specific  columns:  
+
+Snytax
+INSERT INTO table_name (col1_name,col2_name,col3_name....coln_name)	 
+VALUES(col1_val,col2_val,col3val....coln_val); 
+
+Example: 
+INSERT INTO departments (Department_Id,Department_Name) VALUES(300,'Billing'); 
+
+Output: 
+DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+------------- ------------------------------ ---------- -----------
+          300 Billing
+
+========================================================================
+iii.  To Insert user defined data in columns:  
+
+Snytax:  
+INSERT INTO table_name VALUES(&col1_name,&col2_name,&col3	_name....&coln_name);  
+
+Example:  
+INSERT INTO departments  VALUES(&Department_Id,&Department_Name,	 
+&Manager_Id,&Location_Id) ;  
+
+Output: 
+Enter value for department_id: 310 
+Enter value for department_name: 'Sales'  
+Enter value for manager_id: 102  
+Enter value for location_id: 2500  
+old   1: INSERT INTO departments  VALUES(&Department_Id, 
+&Department_Name,&Manager_Id,&Location_Id)  
+new   1: INSERT INTO departments  VALUES(310,'Sales',102,2500)  
+
+DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+------------- ------------------------------ ---------- -----------
+          310 Sales                                 102        2500
+========================================================================  
+iv.  Insert used to copy data from 1 table to another table:
+
+Snytax:
+INSERT INTO new_table_name COPY(SELECT * FROM old_table_name);
+
+Example:
+INSERT INTO dept COPY(SELECT * FROM departments);	
+
+Output:
+31 rows created.
+
+2.   Update:
+
+Update command is used to modify or change the existing data in a table. Update command is used along with 'Set' keyword. The 'Set' keyword informs SQL about which column and value has to be updated.The 'Where' Clause is also usually mentioned in Update command to specify where the values need to be modified.
+
+This is how Update command is used in SQL queries:
+===================================================================================
+	i.To Update one record:
+
+	Snytax:
+	UPDATE table_name SET column_name=new_value WHERE column_name=unique_value;
+
+	Example:
+	UPDATE departments SET manager_id=101,location_id=2500 WHERE department_id=300;
+
+	Output:
+	 DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+         ------------- ------------------------------ ---------- -----------
+          300                   Billing                       101        2500
+
+===================================================================================
+	ii.To Update multiple records:
+
+	Snytax:
+	UPDATE table_name SET column_name=new_value WHERE column_name=common_value;
+
+	Example:
+	UPDATE departments SET location_id=2500 WHERE manager_id=101;
+
+	Output:
+	DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+        ------------- ------------------------------ ---------- -----------
+          280         Quality Control                       101        2500
+          290         Design                                101        2500
+          300         Billing                               101        2500
+
+===================================================================================
+	iii.To Update 1 record using data from another record:
+
+	Snytax:
+	UPDATE table_name SET column_name=(SELECT column_name FROM table_name WHERE 
+        column_name=specific_value) WHERE 	column_name=specific_value;
+
+	Example:
+	UPDATE departments SET manager_id=(SELECT manager_id FROM departments WHERE 
+        department_id=310) WHERE  department_id=300;
+
+	Output:
+	DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+        ------------- ------------------------------ ---------- -----------
+          300                Billing                     102
+
+3.  Delete:
+
+Delete command is used to remove data from table. The major difference between Deleting all rows from a table and Truncate command is that, Delete command is not auto-commited like Truncate and it can be rolled back.
+
+This is how Delete command is used in SQL queries:
+===================================================================================
+	i.To Delete all rows:
+
+	Snytax:
+	DELETE FROM table_name;
+
+	Example:
+	DELETE FROM dept;
+
+	Output:
+	31 rows deleted.
+	(All rows in the table were deleted)
+===================================================================================
+	ii.To Delete specific rows:
+
+	Snytax:
+	DELETE FROM table_name WHERE column_name=specific_value;
+
+	Example:
+	DELETE FROM departments WHERE location_id=1400;
+
+	Output:
+	DEPARTMENT_ID     DEPARTMENT_NAME     MANAGER_ID     LOCATION_ID
+	----------------------------------------------------------------------------------------------------------------------------
+	 60                           IT            103        1400
+	(The row mentioned above was deleted)
+
+	NOTE:
+	While deleting a record check if it has any child records because parent record 	will not be 
+        deleted as long as child record is not deleted.
+===================================================================================
+DCL:
+
+DCL stands for Data Control Language. It is used to control who can have access to perform SQL commands on database objects. With the help to DCL one can either give ot take back control privilages from a user.
+
+Following is a list of control privilages that can be given or taken back from a user:
+1.	Create
+2.	Alter
+3.	Drop
+4.	Insert
+5.	Update
+6.	Delete
+7.	Select
+8.	Create Index
+
+DCL Commands are as follows:
+1.	Grant
+2.	Revoke
+
+1.   Grant:
+
+Grant Command is used for providing privilages to user.
+
+This is how Grant command is used in SQL queries:
+========================================================================
+i.	To grant specific privilages to a user:
+
+        Syntax:
+        GRANT privilage1,privilage2 ON database_object TO user_id;
+
+	Example:
+        GRANT SELECT,INSERT ON departments TO 'Farkhanda'@localhost;
+
+        Output:
+        Grant succeeded.
+==================================================================
+ii.	To grant all privilages to a user:
+	Syntax:
+	GRANT all ON database_object TO user_id;
+
+	Example:
+	GRANT all ON departments TO 'Farkhanda'@localhost;
+
+	Output:
+	Grant succeeded.
+
+2.   Revoke:
+
+Revoke Command is used for taking back privilages to user.
+
+This is how Revoke Command is used in SQL queries:
+========================================================================
+i.	To revoke specific privilages to a user:
+
+        Syntax:
+        REVOKE privilage1,privilage2 ON database_object FROM user_id;
+
+        Example:
+        REVOKE SELECT,INSERT ON departments FROM 'Farkhanda'@localhost;
+
+        Output:
+        Revoke succeeded.
+==================================================================
+ii.	To revoke all privilages to a user:
+
+	Syntax:
+	REVOKE all ON database_object FROM user_id;
+
+	Example:
+	REVOKE all ON departments FROM 'Farkhanda'@localhost;
+
+	Output:
+	Revoke succeeded.
+
+TCL stands for Transaction Control Language. It is used to DML commands to save or undo them.
+
+TCL Commands are as follows:
+1.	Commit
+2.	Savepoint
+3.	Rollback
+
+1.   Commit:
+
+Commit Command is used for saving all DML commands executed.
+
+This is how Commit Command is used in SQL Queries:
+=======================================================================
+	Syntax:
+	commit;
+
+	Output:
+	Commit complete.
+========================================================================
+
+2.   Savepoint:
+
+Savepoint Command is used for saving transaction done up to a specific point.
+
+This is how Savepoint Command is used in SQL queries:
+========================================================================
+	Syntax:
+	savepoint savepoint_name;
+
+	Example:
+	savepoint a;
+
+	Output:
+	Savepoint created.
+
+3.   Rollback:
+Revoke Command is used to undo transaction upto the last savepoint or commit.
+This is how Rollback Command is used in SQL queries:
+========================================================================
+i.	Rollback until last commit:
+
+        Syntax:
+        rollback;
+
+        Output:
+        Rollback complete.
+==================================================================
+ii.	Rollback until last savepoint:
+
+	Syntax:
+	rollback to savepoint_name;
+
+	Example:
+	rollback to a;
+
+	Output:
+	Rollback complete.
+========================================================================
+
+Where Clause:
+
+The Where Clause is used to filter out undesired data that an SQL Query may potenially return.Where Clause is always followed by a condition. The query checks which data meets the requirements stated by the condition stated after the Where Clause. However, a Where Clause is useless by itself. It is paired with certain commands in a query.Usually,DML Commands such as Update,Delete and DCL Command such as Select are paired with Where Clause to filterout undesired data.
+
+This is how Where Clause is used in SQL Quereies:
+===================================================================================
+i. Where Clause with Update Command:
+
+Syntax:
+UPDATE table_name SET col_name=val WHERE condition;
+
+Example:
+UPDATE departments SET location_id=1400 WHERE department_no=290;
+
+Output:
+
+DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+------------- ------------------------------ ---------- -----------
+          290 Design                                101        1400
+
+(Location_id was updated only where condition was met).
+
+===================================================================================
+ii. Where Clause with Delete Command:
+
+Snytax:
+DELETE FROM table_name WHERE condition;
+
+Example:
+DELETE FROM departments WHERE department_no=70;
+
+Output:
+Row where department_no=70 was deleted.
+
+===================================================================================
+iii. Where Clause with Select Command:
+
+Snytax:
+SELECT col_name FROM table_name WHERE condition;
+
+Example:
+SELECT department_name FROM departments WHERE location_id=1700;
+
+Output:
+DEPARTMENT_NAME
+-------------------------------------
+Quality Control
+Administration
+Purchasing
+
+(Data in columns was selected where condition was met).
+
+Group By Clause:
+The Group By Clause is used to for groups of similary types of data. Group By Clause is always followed by one or more column names.The SQL query having Group By Clause checks if there are common values inputted in the column mentioned after Group By. After verifying the common values a groups of such values is created.
+
+It helps us to gather detailed information regarding a group of data.
+
+Group By Clause is oftened paired with functions and Having Clause. 
+
+This is how Group By Clause is used in SQL Queries:
+==================================================================================
+i. Query with Group By Clause:
+
+Syntax:
+SELECT function(col_name)/col_name FROM table_name GROUP BY column_name;
+
+Example:
+SELECT count(department_no),location_id FROM departments GROUP BY location_id;
+
+Output:
+COUNT(DEPARTMENT_NO)       LOCATION_ID
+---------------------------------------------------------------
+                   2                               1400
+                   1                               1500
+                   3                               1700
+                   1                               1800
+                   1                               2400
+                   1                               2500
+                   1                               2700
+                   1
+Having Clause:
+
+Having Clause functions similarly to Where Clause. However, Where Clause cannot be used after Group By Clause. Hence,Having Clause is used after Group By Clause to filter data as per the condition stated after Having Clause.
+
+This is how Having Clause is used in SQL Queries:
+===================================================================================
+i. Query with Having Clause:
+
+Syntax:
+SELECT function(col_name)/col_name FROM table_name GROUP BY column_name HAVING condition;
+
+Example:
+SELECT count(department_no),location_id FROM departments GROUP BY location_id HAVING count(department_no)>1;
+
+Output:
+COUNT(DEPARTMENT_NO)       LOCATION_ID
+---------------------------------------------------------------
+                   2          1400
+	           3          1700
+
+Order By Clause:
+Order By Clause is used to arrange data in ascending or descending order . Order By Clause is always followed by a column name.It is always used at the end of the SQL Query.
+
+This is how the Order By Clause is used in SQL Queries:
+===================================================================================
+i. Order by in ascending order used with Where Clause:
+
+Syntax:
+SELECT * FROM table_name WHERE condition ORDER BY col_name;
+
+Example:
+SELECT * FROM departments WHERE department_no between 10 and 50 ORDER BY department_name;
+
+Output:
+DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+---------------------------------------------------------------------------------------------------------------
+           10 Administration                        200        1700
+           40 Human Resources                       203        2400
+           20 Marketing                             201        1800
+           30 Purchasing                            114        1700
+           50 Shipping                              121        1500
+
+===================================================================================
+ii. Order by in descending order with Where Clause:
+
+Syntax:
+SELECT * FROM table_name WHERE condition ORDER BY col_name desc;
+
+Example:
+SELECT * FROM departments WHERE department_no between 10 and 50 ORDER BY department_no desc;
+
+Output:
+DEPARTMENT_NO DEPARTMENT_NAME                MANAGER_ID LOCATION_ID
+---------------------------------------------------------------------------------------------------------------
+ 	   50 Shipping                              121        1500
+           40 Human Resources                       203        2400
+           30 Purchasing                            114        1700
+           20 Marketing                             201        1800
+           10 Administration                        200        1700
+
+===================================================================================
+iii. Order by used with Group By and Having Clause:
+
+Syntax:
+SELECT function(col_name)/col_name FROM table_name GROUP BY column_name HAVING condition 
+ORDER BY col_name;
+
+Example:
+SELECT count(department_no),location_id FROM departments GROUP BY location_id HAVING count(department_no)>1 ORDER BY location_id desc;
+
+Output:
+COUNT(DEPARTMENT_NO)       LOCATION_ID
+---------------------------------------------------------------
+	           3            1700
+                   2            1400
+
+String Functions:
+This is how String Functions are used in SQL Queries:
+
+===================================================================================
+i. To show a string in upper case:
+
+Syntax:
+SELECT UPPER(col_name) FROM table_name;
+
+Example:
+SELECT UPPER(department_name) FROM departments WHERE department_no IN(10,20);
+
+Output:
+UPPER(DEPARTMENT_NAME)
+-----------------------------------------
+ADMINISTRATION
+MARKETING
+
+===================================================================================
+ii. To show a string in lower case:
+
+Syntax:
+SELECT LOWER(col_name) FROM table_name;
+
+Example:
+SELECT LOWER(department_name) FROM departments WHERE department_no IN(10,20);
+
+Output:
+LOWER(DEPARTMENT_NAME)
+------------------------------
+administration
+marketing
+
+===================================================================================
+iii. To show string with first letter in caps:
+
+Syntax:
+SELECT INITCAP(col_name) FROM table_name;
+
+Example:
+SELECT INITCAP(department_name) FROM departments WHERE department_no IN(10,20);
+
+Output:
+INITCAP(DEPARTMENT_NAME)
+-------------------------------------------
+Administration
+Marketing
+
+===================================================================================
+iv. To show length of string:
+
+Syntax:
+SELECT LENGTH(col_name) FROM table_name;
+
+Example:
+SELECT LENGTH(department_name),depaertment_name FROM departments WHERE department_no IN(10,20);
+
+Output:
+LENGTH(DEPARTMENT_NAME) DEPARTMENT_NAME
+-------------------------------------------------------------------------------
+             14         Administration
+              9          Marketing
+
+===================================================================================
+v. To add to strings:
+
+Syntax:
+SELECT CONCAT(col1_name,col2_name) FROM table_name;
+
+Example:
+SELECT employee_id,CONCAT(first_name,last_name) FROM employees WHERE employee_id=100;
+
+Output:
+
+Before Concat:
+EMPLOYEE_ID    FIRST_NAME           LAST_NAME
+---------------------------------------------------------------------
+ 100 	       Steven                    King
+
+After Concat:
+EMPLOYEE_ID      CONCAT(FIRST_NAME,LAST_NAME)
+-----------------------------------------------------------------------
+        100             StevenKing
+
+Aggregate funcations:
+
+There are various Aggregate functions like:
+i.  COUNT
+ii. MAX
+iii.MIN
+iv. AVG
+v.  SUM
+
+==================================================================================
+There Synatx is as follows:
+i.  COUNT(col_name)
+ii. MAX(col_name)
+iii.MIN(col_name)
+iv. AVG(col_name)
+v.  SUM(col_name)
+
+==================================================================================
+This is how aggregate functions are used in SQL Queries:
+
+Example:
+SELECT count(department_no),min(department_no),max(department_no),avg(department_no),sum(department_no) FROM departments WHERE department_no between 10 and 50;
+
+==================================================================================
+Output:
+Count	Min	Max	Avg	Sum
+5	10	50	30	150
+
+Date Functions:
+There are various Date Functions in Oracle SQL like:
+i.   SYSDATE :This shows the current date
+ii.  TO_CHAR:This shows the date in the desired format
+iii. MONTHS_BETWEEN: This helps in finding the no. of months between 2 dates
+
+This is how Date Functions are used in SQL Queries:
+===================================================================================
+i. Sysdate in Query:
+
+Syntax:
+SELECT SYSDATE FROM table_name;
+
+Example:
+SELECT SYSDATE FROM DUAL;
+
+Output:
+SYSDATE
+---------------
+17-MAR-23
+
+===================================================================================
+ii. To_char in Query:
+
+Syntax:
+SELECT TO_CHAR(date,format) FROM table_name;
+
+EXAMPLE:
+SELECT TO_CHAR(SYSDATE,'DD-MM-YY HH-MM-SS') FROM DUAL;
+
+Output:
+TO_CHAR(SYSDATE)
+---------------------------------
+17-03-23 10-03-35
+
+===================================================================================
+iii. Months Between in Query:
+
+Syntax:
+SELECT MONTHS_BETWEEN(date1,date2) FROM table_name;
+
+EXAMPLE:
+SELECT MONTHS_BETWEEN('17-JULY-2023',SYSDATE) FROM DUAL;
+
+Output:
+MONTHS_BETWEEN('17-JULY-2023',SYSDATE)
+-----------------------------------------------------------------------------
+                                     4
+
+JOINS:
+
+Joins are used to join two or more tables together. A common column is found between a number of tables and the tables are joint using that common column.
+Joins help in displaying data from various tables together.
+
+Types of Joins:
+1. Inner Join
+2. Left Outer Join
+3. Right Outer Join
+4. Full Join
+
+Inner Join:
+
+Inner Join selects the common columns between two or more tables and displays only the matching  data. Data which does not match from between joint tables is omitted.
+
+Syntax:
+SELECT col1_name,col2_name FROM table_name1 INNER JOIN table_name2 ON table_name1.common_col= table_name2.common_col ;
+
+Example:
+SELECT e.empid,e.empname,d.dname FROM employee e INNER JOIN dept d ON e.deptno=d.deptno;
+
+Output:
+     EMPID EMPNAME              DNAME
+--------------------------------------------------------
+       101 Ramesh               Design
+       102 Amit                 Production
+       103 Suresh               Design
+
+Left Outer Join:
+In Left Outer Join the SQL Query finds matching records from both the table's common columns. However, it displays all records from the left side table and only matching records from the right side table.
+
+Syntax:
+SELECT col1_name,col2_name FROM table_name1 LEFT OUTER JOIN table_name2 ON table_name1.common_col= table_name2.common_col;
+
+Example:
+SELECT e.empid,e.empname,d.dname FROM employee e LEFT OUTER JOIN dept d ON e.deptno=d.deptno;
+
+Output:
+     EMPID EMPNAME              DNAME
+---------- -------------------- --------------------
+       101 Ramesh               Design
+       102 Amit                 Production
+       103 Suresh               Design
+       105 Ganesh
+
+Right Outer Join:
+In Right Outer Join the SQL Query finds matching records from both the table's common columns. However, it displays all records from the right side table and only matching records from the right side table.
+
+Syntax:
+SELECT col1_name,col2_name FROM table_name1 RIGHT OUTER JOIN table_name2 ON table_name1.common_col= table_name2.common_col ;
+
+Example:
+SELECT e.empid,e.empname,d.dname FROM employee e RIGHT OUTER JOIN dept d ON e.deptno=d.deptno;
+
+Output:
+     EMPID EMPNAME              DNAME
+---------- -------------------- --------------------
+       101 Ramesh               Design
+       102 Amit                 Production
+       103 Suresh               Design
+                                Quality Control
+                                Education
+
+Full Join:
+
+In Full Outer Join the SQL Query finds matching records from both the table's common columns. However, it displays all records from both the tables. This means that both matching and non-matching records from both the tables will be displayed.
+
+Syntax:
+SELECT col1_name,col2_name FROM table_name1 FULL JOIN table_name2 ON table_name1.common_col= table_name2.common_col ;
+
+Example:
+SELECT e.empid,e.empname,d.dname FROM employee e FULL JOIN dept d ON e.deptno=d.deptno;
+
+Output:
+     EMPID EMPNAME              DNAME
+---------- -------------------- --------------------
+       101 Ramesh               Design
+       102 Amit                 Production
+       103 Suresh               Design
+       105 Ganesh
+                                Quality Control
+                                Education
+
+

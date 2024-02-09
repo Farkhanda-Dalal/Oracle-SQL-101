@@ -1,0 +1,316 @@
+create table employee2
+(
+empno number(6) constraint pk_eid0 primary key,
+ename varchar2(30) not null,
+ejob varchar2(10),
+grade char(3) default 'a',
+dob date check(dob>'01-Jan-2003'),
+esal number(7),
+deptno number(2)
+);
+
+insert into employee2 values(11,'Sunil','Clerk','b','1-Jan-2008',10000,11);
+insert into employee2 values(102,'Rajesh','Salesman',null,null,null,10);
+
+//to add column:
+alter table employee2 add(email varchar(20));
+
+
+//to add data in column:
+update employee2 set email='abc@gmail.com' where empno=101;
+
+
+//to add constraint in data in column:
+alter table  employee2 add constraint emp2_email_uk unique(email);
+
+
+
+//to add column:
+alter table employee2 add (salary number(10));
+
+
+
+//to add column:
+alter table employee2 add (salary2 number(10));
+
+
+
+//to drop column:
+alter table employee2 drop column salary2;
+
+//to modify size of datatype:
+alter table employee2 modify(grade char(6));
+
+//to rename column:
+alter table employee2 rename column ename to First_Name;
+
+//to add constraint
+alter table employee2 add constraint emp2_email_pk primary key(email);
+
+//to delete constraint
+alter table employee2 drop constraint pk_eid2;
+
+//to disbale constraint
+alter table employee2 disable constraint pk_eid2;
+
+//to enable constraint
+alter table employee2 enable constraint pk_eid2;
+=============================================================================================================
+DML COMMAMDS:
+---------------------------------------------------------------------------------------------------------------
+INSERT COMMANDS:
+
+//insert simple data:
+insert into employee2 values(101,'Sunil','Clerk','b','1-Jan-2008',10000,10);
+
+//insert less values than available columns:
+insert into employee2 (empno,ename,ejob,deptno)values(104,'Farkhanda','CEO',10);
+
+//insert values from user:
+insert into employee2 values(&empno,&ename,&ejob,&grade,&dob,&esal,&depno);
+
+//insert less values than columns and take from user:
+insert into employee2 (empno,ename,esal) values(&empno,&ename,&esal) ;
+
+//insert data from 1 table to another:
+insert into emp copy(select * from employee2);
+
+----------------------------------------------------------------------------------------------------------------
+UPDATE COMMANDS:
+
+//update 1 Value
+update employee2 set ename='Kumar' where empno=101;
+
+//update 2 values ar one time
+update employee2 set ejob='President',ename='Sunil' where empno=102;
+
+//set data from 1 row to other
+update employee set esal=(select esal from employee2 where empno=200) where empno=101; 
+------------------------------------------------------------------------------------------------------------------
+DELETE COMMANDS:
+
+//delete using 1 reference:
+delete from employee2 where deptno=10;
+
+//delete row:
+delete from employee2 where empno=101;
+
+//delete all data from table:
+delete from employee2;
+-------------------------------------------------------------------------------------------------------------------
+commit;
+
+savepoint;
+
+rollback;
+
+create sequence demo_seq
+start with 10
+increment by 1
+minvalue 5
+maxvalue 15
+nocache
+nocycle
+
+--------------------------------------------------------------------------------------------------------------------
+====================================================================================================================
+DQL COMMANDS:
+
+//to view only desired colums from table:
+select employee_id,salary from employees;
+
+//to view only desired columns from table with allies(ie.shortforms we created for column names):
+select employee_id"emp_id",salary"sal" from employees;
+
+//to view data in desired columns within a desired range:
+select employee_id,first_name,salary from employees where salary>5000 and salary<15000;
+                                     OR
+select employee_id,first_name,salary from employees where salary between 5000 and 15000;
+
+//to view desired columns where condition=given value:
+select employee_id,first_name,salary from employees where salary in(10000,12000,21000);
+                                     OR
+select employee_id,first_name,salary from employees where salary=10000 or salary=12000 or salary=21000;
+
+//to view desired columns outside given range:
+select employee_id,first_name,salary from employees where salary not between 5000 and 15000;
+                                      OR
+select employee_id,first_name,salary from employees where salary not in(10000,12000,21000);
+
+//to view data in desired columns by asc order:
+select employee_id,first_name,salary from employees order by salary;
+
+//to view data in desired columns by descending order:
+select employee_id,first_name,salary from employees order by salary desc;
+
+//salary will print in ascending order and employee_id in desc order:
+select employee_id,first_name,salary from employees order by salary,employee_id desc;
+
+select employee_id,first_name from employees
+
+//to view data which is null:
+select * from employees where  COMMISSION_PCT is null;
+
+//to view data which is not repeated:
+select distinct manager_id from employees;
+
+//to view max value:
+select max(employee_id) from employees;
+
+//to view min values:
+select min(employee_id) from employees;
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+String function:
+
+//for uppercase:
+select upper('ramesh') from dual;
+
+//for lowercase:
+select lower('ramesh') from dual;
+
+//for capital letter in 1st position:
+select initcap('ramesh') from dual;
+
+select upper('ramesh')"Upper Case",lower('ramesh')"Lower Case", initcap('ramesh')"Initial Capital" from dual;
+
+//for finding length of string:
+select first_name,length(first_name),upper(first_name),lower(first_name),initcap(first_name) from employees where employee_id between 199 and 206;
+
+//trimming gap:
+select length(trim('abc   ')),length(ltrim('   abc')),length(rtrim('abc   ')) from dual;
+
+//to add 2 strings together:
+select concat('abc','xyz') from dual;
+select concat(first_name,last_name) from employees;
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Aggregate Functions:
+//to view total number:
+ select count(employee_id) from employees where salary=10000;
+//to view max value:
+//to view min value:
+//to view avg:
+//to view sum:
+
+//use of all aggregate functions:
+select count(department_id),max(salary),min(salary),avg(salary),sum(salary) from employees;
+
+COUNT(DEPARTMENT_ID) MAX(SALARY) MIN(SALARY) AVG(SALARY) SUM(SALARY)
+-------------------- ----------- ----------- ----------- -----------
+                 106       24000        2100  6461.68224      691400
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+Group by clause:
+//select department_id,count(employee_id) from employees  group by department_id;
+output:
+DEPARTMENT_ID COUNT(EMPLOYEE_ID)
+------------- ------------------
+          100                  6
+           30                  6
+                               1
+           90                  3
+           20                  2
+           70                  1
+          110                  2
+           50                 45
+           80                 34
+           40                  1
+           60                  5
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+//select department_id,count(employee_id) from employees group by department_id order by department_id;
+
+DEPARTMENT_ID COUNT(EMPLOYEE_ID)
+------------- ------------------
+           10                  1
+           20                  2
+           30                  6
+           40                  1
+           50                 45
+           60                  5
+           70                  1
+           80                 34
+           90                  3
+          100                  6
+          110                  2
+                               1
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// select department_id,count(employee_id),max(salary),min(salary),avg(salary),sum(salary) from employees group by department_id order by department_id;
+
+DEPARTMENT_ID COUNT(EMPLOYEE_ID) MAX(SALARY) MIN(SALARY) AVG(SALARY) SUM(SALARY)
+------------- ------------------ ----------- ----------- ----------- -----------
+           10                  1        4400        4400        4400        4400
+           20                  2       13000        6000        9500       19000
+           30                  6       11000        2500        4150       24900
+           40                  1        6500        6500        6500        6500
+           50                 45        8200        2100  3475.55556      156400
+           60                  5        9000        4200        5760       28800
+           70                  1       10000       10000       10000       10000
+           80                 34       14000        6100  8955.88235      304500
+           90                  3       24000       17000  19333.3333       58000
+          100                  6       12000        6900        8600       51600
+          110                  2       12000        8300       10150       20300
+                               1        7000        7000        7000        7000
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//select salary,count(employee_id) from employees group by salary order by salary;
+
+    SALARY COUNT(EMPLOYEE_ID)
+---------- ------------------
+      2100                  1
+      2200                  2
+      2400                  2
+      2500                  6
+      2600                  4
+      2700                  2
+      2800                  4
+      2900                  3
+      3000                  2
+      3100                  4
+      3200                  4
+      3300                  2
+      3400                  1
+      3500                  1
+      3600                  2
+      3800                  1
+      3900                  1
+      4000                  1
+      4100                  1
+      4200                  2
+      4400                  1
+      4800                  2
+      5800                  1
+      6000                  2
+      6100                  1
+      6200                  2
+      6400                  1
+      6500                  2
+      6800                  1
+      6900                  1
+      7000                  3
+      7200                  1
+      7300                  1
+      7400                  1
+      7500                  2
+      7700                  1
+      7800                  1
+      7900                  1
+      8000                  3
+      8200                  2
+      8300                  1
+      8400                  1
+      8600                  1
+      8800                  1
+      9000                  4
+      9500                  3
+      9600                  1
+     10000                  4
+     10500                  2
+     11000                  3
+     11500                  1
+     12000                  3
+     13000                  1
+     13500                  1
+     14000                  1
+     17000                  2
+     24000                  1
+===================================================================================================================================================================
+

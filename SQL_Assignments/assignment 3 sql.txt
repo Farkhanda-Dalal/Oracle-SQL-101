@@ -1,0 +1,490 @@
+TABLES:
+
+1. BOOKS:
+
+ 
+   BOOK_NO BOOK_NAME                      AUTHOR_NAME                 COST 	      CATEGORY
+---------- ------------------------------ ------------------------------ ---------- ----------
+       101 Let us C                                  Denis Ritchie                         450 	     System
+       102 Oracle-Complete Ref            Loni                                       550 	     Database
+       103 Mastering SQL                      Loni                                       300 	     rdbms
+       104 PL SQL-Ref                            Scott Urman                         750 	     Database
+       111 far                                          Farkhanda                             900
+
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ BOOK_NO                                                                                                           NOT NULL NUMBER(6)
+ BOOK_NAME                                                                                                         NOT NULL VARCHAR2(30)
+ AUTHOR_NAME                                                                                                                VARCHAR2(30)
+ COST                                                                                                                       NUMBER(7,2)
+ CATEGORY                                                                                                                   VARCHAR2(10)
+
+======================================================================================================================================================
+
+2.MEMBER1:
+
+ MEMBER_ID MEMBER_NAME                              MEMBER_ADDRESS                                     ACC_OPEN_ MEMBERSHIP_TYPE       FEES_PAID MAX_BOOKS_ALLOWED PENALTY_AMOUNT
+---------- ---------------------------------------- -------------------------------------------------- --------- -------------------- ---------- ----------------- --------------
+         1 Richa Sharma                             Pune                                               10-DEC-05 Lifetime                 250000                 2             50
+         2 Garima Sen                               Pune                                               10-JAN-23 Annual                     1000                 5            100
+       101 Farkhanda                                348_Ghorpade_Peth                                  10-FEB-03 Annual                     1000                 6            100
+       102 Aarti                                    Karve Nagar                                        19-MAR-10 Quarterly                    50                 5             30
+       103 Ankita                                   Rasta Peth                                         13-DEC-22 Lifetime                   5000                20              0
+
+
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ MEMBER_ID                                                                                                         NOT NULL NUMBER(5)
+ MEMBER_NAME                                                                                                       NOT NULL VARCHAR2(50)
+ MEMBER_ADDRESS                                                                                                             VARCHAR2(50)
+ ACC_OPEN_DATE                                                                                                              DATE
+ MEMBERSHIP_TYPE                                                                                                            VARCHAR2(20)
+ FESS_PAID                                                                                                                  NUMBER(4)
+ MAX_BOOKS_ALLOWED                                                                                                          NUMBER(2)
+ PENALTY_AMOUNT                                                                                                             NUMBER(7,2)
+
+============================================================================================================================================================
+
+3. ISSUE:
+
+LIB_ISSUE_ID    BOOK_NO  MEMBER_ID ISSUE_DAT RETURN_DA
+------------ ---------- ---------- --------- ---------
+        7001        101          1 10-DEC-06 31-DEC-06
+        7002        102          2 25-DEC-06 31-DEC-06
+        7003        104          1 15-DEC-06 31-DEC-06
+        7004        101          1 04-JUL-06 31-DEC-06
+        7005        104          2 15-NOV-06 30-NOV-06
+        7006        101          2 18-FEB-06
+        7007        103          2 18-FEB-06 30-MAR-06
+
+
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ LIB_ISSUE_ID                                                                                                      NOT NULL NUMBER(5)
+ BOOK_NO                                                                                                                    NUMBER(5)
+ MEMBER_ID                                                                                                                  NUMBER(5)
+ ISSUE_DATE                                                                                                                 DATE
+ RETURN_DATE                                                                                                                DATE
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q1 List category and and number of books in each category:
+
+SQL> select category,count(Book_Name) from books group by category;
+
+CATEGORY   COUNT(BOOK_NAME)
+---------- ----------------
+                          1
+System                    1
+Database                  2
+rdbms                     1
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q2 List book_no and number of times book was issued in descending order:
+
+select book_no, count(issue_date) from issue group by book_no order by count(issue_date) desc;
+
+   BOOK_NO COUNT(ISSUE_DATE)
+---------- -----------------
+       101                 3
+       104                 2
+       102                 1
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q3 List max,min,avg,total penalty amount int member table: 
+
+select sum(penalty_amount),max(penalty_amount),min(penalty_amount),avg(penalty_amount) from member;
+
+SUM(PENALTY_AMOUNT) MAX(PENALTY_AMOUNT) MIN(PENALTY_AMOUNT) AVG(PENALTY_AMOUNT)
+------------------- ------------------- ------------------- -------------------
+                130                 100                  30                  65
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q4 Display member_id and no of books issued by each member that issued more thant 2 books:
+
+
+SQL> select member_id,count (book_no) from issue group by member_id having (count(book_no))>2;
+
+ MEMBER_ID COUNT(BOOK_NO)
+---------- --------------
+         1              3
+         2              3
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q5 Display member_id,book_no,no of times same books was issued by member in desc of count:
+
+select member_id,book_no,count(book_no) from issue group by member_id,book_no order by member_id,count(book_no) desc;
+
+ MEMBER_ID    BOOK_NO COUNT(BOOK_NO)
+---------- ---------- --------------
+         1        101              2
+         1        104              1
+         2        101              1
+         2        104              1
+         2        102              1
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q6  Display month and no of books issued in each month in descending order:
+
+select to_char(issue_date,'month')"ISSUE DATE",count(book_no) from issue group by to_char(issue_date,'month') order by count(book_no) desc;
+
+ISSUE DAT COUNT(BOOK_NO)
+--------- --------------
+december               3
+november               1
+july                   1
+february               1
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q7 Display book_no where of books not issued yet:
+
+select b.book_no,b.book_name,i.issue_date from books b left join issue i on  b.book_no=i.book_no where i.issue_date is null;
+
+   BOOK_NO BOOK_NAME                      ISSUE_DAT
+---------- ------------------------------ ---------
+       111 far
+       103 Mastering SQL
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q8 List all member id and list atleast 1 book issued by them:
+
+ update member set member_id=1 where member_id=101;
+ update member set member_id=2 where member_id=102;
+
+  SELECT m.member_id,i.book_no from member m left join issue i on m.member_id=i.member_id;
+
+ MEMBER_ID    BOOK_NO
+---------- ----------
+         1        101
+         2        102
+         1        104
+         1        101
+         2        104
+         2        101
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q9 List member_id having highest an dlowest number of books issued:
+
+Highest:
+select member_id from issue group by member_id having count(book_no)=(select max(count(book_no)) from issue group by member_id);
+
+ MEMBER_ID
+----------
+         2
+
+Lowest:
+select member_id from issue group by member_id having count(book_no)=(select min(count(book_no)) from issue group by member_id);
+
+ MEMBER_ID
+----------
+         1
+
+PREVIOUS ERROR:
+select member_id,max(count(book_no)) from issue group by member_id;
+select member_id,max(count(book_no)) from issue group by member_id
+       *
+ERROR at line 1:
+ORA-00937: not a single-group group function
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q10 Print issue details of all books issued in December and July:
+
+select * from issue where issue_date like '%-DEC-%' or issue_date like '%-JUL-%' ;
+
+LIB_ISSUE_ID    BOOK_NO  MEMBER_ID ISSUE_DAT RETURN_DA
+------------ ---------- ---------- --------- ---------
+        7001        101          1 10-DEC-06 31-DEC-06
+        7002        102          2 25-DEC-06 31-DEC-06
+        7003        104          1 15-DEC-06 31-DEC-06
+        7004        101          1 04-JUL-06 31-DEC-06
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q11 Print book no,book name, issue date for all books issued in dec and have category database:
+
+SELECT i.book_no,i.issue_date,b.book_name from issue i inner join books b on i.book_no=b.book_no where issue_date like '%DEC%' AND b.category='Database';
+
+   BOOK_NO ISSUE_DAT BOOK_NAME
+---------- --------- ------------------------------
+       102 25-DEC-06 Oracle-Complete Ref
+       104 15-DEC-06 PL SQL-Ref
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q12 List member id,name and number of books issued by them in descending order of count:
+
+select m.member_id,m.member_name,count(i.book_no) from member1 m  LEFT JOIN  issue i on m.member_id=i.member_id group by m.member_id,m.member_name order by count(i.book_no) desc;
+
+ MEMBER_ID MEMBER_NAME                              COUNT(I.BOOK_NO)
+---------- ---------------------------------------- ----------------
+         2 Garima Sen                                              4
+         1 Richa Sharma                                            3
+       101 Farkhanda                                               0
+       103 Ankita                                                  0
+       102 Aarti                                                   0
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q13 list book no,book name,issue date,return date where member name is Richa Sharma:
+
+select m.member_name,b.book_no,b.book_name,i.issue_date,i.return_date from issue i  left outer join member1 m  on m.member_id=i.member_id left outer join books b  on b.book_no=i.book_no where member_name='Richa Sharma';
+
+MEMBER_NAME                                 BOOK_NO BOOK_NAME                      ISSUE_DAT RETURN_DA
+---------------------------------------- ---------- ------------------------------ --------- ---------
+Richa Sharma                                    101 Let us C                       10-DEC-06 31-DEC-06
+Richa Sharma                                    104 PL SQL-Ref                     15-DEC-06 31-DEC-06
+Richa Sharma                                    101 Let us C                       04-JUL-06 31-DEC-06
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q14 List member details where category is database:
+
+select member_name from issue i inner join member1 m on i.member_id=m.member_id inner join books b on b.book_no=i.book_no where b.category='Database' group by member_name;
+
+MEMBER_NAME
+----------------------------------------
+Garima Sen
+Richa Sharma
+
+OR
+
+select distinct m.member_name from member1 m inner join issue i on m.member_id=i.member_id where i.book_no in(select book_no from books where category='Database') ;
+
+MEMBER_NAME
+----------------------------------------
+Garima Sen
+Richa Sharma
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q15 List all books that have highest price in their category:
+
+select book_name,category,cost from books where cost in(select max(cost) from books group by category);
+
+BOOK_NAME                      CATEGORY         COST
+------------------------------ ---------- ----------
+Let us C                       System            450
+PL SQL-Ref                     Database          750
+Mastering SQL                  rdbms             300
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q16 List issue details for books whose issue date is not between account open date and return date:
+
+select * from issue i left outer join member1 m on m.member_id=i.member_id where issue_date not  between m.acc_open_date and i.return_date ;
+
+LIB_ISSUE_ID    BOOK_NO  MEMBER_ID ISSUE_DAT RETURN_DA  MEMBER_ID MEMBER_NAME                              MEMBER_ADDRESS                                     ACC_OPEN_ MEMBERSHIP_TYPE       FEES_PAID MAX_BOOKS_ALLOWED PENALTY_AMOUNT
+------------ ---------- ---------- --------- --------- ---------- ---------------------------------------- -------------------------------------------------- --------- -------------------- ---------- ----------------- --------------
+        7002        102          2 25-DEC-06 31-DEC-06          2 Garima Sen                               Pune                                               10-JAN-23 Annual                     1000           3     100
+        7005        104          2 15-NOV-06 30-NOV-06          2 Garima Sen                               Pune                                               10-JAN-23 Annual                     1000           3     100
+        7006        101          2 18-FEB-06                    2 Garima Sen                               Pune                                               10-JAN-23 Annual                     1000           3     100
+        7007        103          2 18-FEB-06 30-MAR-06          2 Garima Sen                               Pune                                               10-JAN-23 Annual                     1000           3     100
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q17 List member id who have not issued book till now:
+
+select m.member_id from member1 m left join issue i on m.member_id=i.member_id where i.issue_date is null;
+
+ MEMBER_ID
+----------
+       103
+       102
+       101
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q18 List member where books issued is greater than max books allowed:
+
+select m.member_id from member1 m inner join issue i on m.member_id=i.member_id where m.max_books_allowed<=(select count(i.book_no) from issue) group by m.member_id;
+
+ MEMBER_ID
+----------
+         1
+         2
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q19 List all members that have issued same books as Garima Sen:
+
+select distinct(m.member_name) from member1 m  inner join issue i on m.member_id=i.member_id where i.book_no in (select book_no from issue where member_id=2);
+
+MEMBER_NAME
+----------------------------------------
+Garima Sen
+Richa Sharma
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q20 List book nam eand price of books not returned for more than 30 days:
+
+select b.book_name,b.cost from books b inner join issue i on b.book_no=i.book_no where (return_date-issue_date>=30);
+
+BOOK_NAME                            COST
+------------------------------ ----------
+Let us C                              450
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q21 self join
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q22 List member id and name of members with highest and lowest number of books issued:
+
+HIGHEST:
+select m.member_id,m.member_name from member1 m inner join issue i on m.member_id=i.member_id group by m.member_id,m.member_name having count(book_no)= (select max(count(book_no)) from issue group by member_id);
+
+ MEMBER_ID MEMBER_NAME
+---------- ----------------------------------------
+         2 Garima Sen
+
+LOWEST:
+select m.member_id,m.member_name from member1 m inner join issue i on m.member_id=i.member_id group by m.member_id,m.member_name having count(book_no)= (select min(count(book_no)) from issue group by member_id);
+
+ MEMBER_ID MEMBER_NAME
+---------- ----------------------------------------
+         1 Richa Sharma
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q23 List details of 3 highest priced books:
+
+select * from (select * from books order by cost desc)where rownum<=3;
+
+   BOOK_NO BOOK_NAME                      AUTHOR_NAME                          COST CATEGORY
+---------- ------------------------------ ------------------------------ ---------- ----------
+       111 far                            Farkhanda                             900
+       104 PL SQL-Ref                     Scott Urman                           750 Database
+       102 Oracle-Complete Ref            Loni                                  550 Database
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q24 Select total cost of books not returned:
+
+select sum(b.cost) from books b inner join issue i on b.book_no=i.book_no where return_date is null;
+
+SUM(B.COST)
+-----------
+        450
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q25 List book details of book that is issued max number of times:
+
+select b.book_name from books b inner join issue i on b.book_no=i.book_no group by book_name having count(i.book_no)=(select max(count(book_no)) from issue group by book_no);
+
+BOOK_NAME
+------------------------------
+Let us C
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q26 List how many books are issued to lifetime members:
+
+select count(i.book_no) from issue i left join member1 m on m.member_id=i.member_id where m.membership_type='Lifetime';
+
+COUNT(I.BOOK_NO)
+----------------
+               3
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q27 List membership types and no of members who have that membership:
+
+SELECT membership_type,count(member_id) from member1 group by membership_type;
+
+MEMBERSHIP_TYPE      COUNT(MEMBER_ID)
+-------------------- ----------------
+Annual                              2
+Lifetime                            2
+Quarterly                           1
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q28 Find out top 5 members, with their membership type, who have issued books maximum number of times:
+
+select * from (select m.member_id,m.membership_type from member1 m,issue i where m.member_id=i.member_id group by  m.member_id,m.membership_type order by count(book_no) desc) where rownum<=5;
+
+ MEMBER_ID MEMBERSHIP_TYPE
+---------- --------------------
+         2 Annual
+         1 Lifetime
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q29
+
+ 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q30 List first 5 members who have joint library:
+
+select * from (select member_name from member1 order by acc_open_date) where rownum<=5;
+
+MEMBER_NAME
+----------------------------------------
+Farkhanda
+Richa Sharma
+Aarti
+Ankita
+Garima Sen
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q31 List members who have issued books during period 1st dec to 31st dec:
+
+select distinct m.member_name,m.membership_type from member1 m inner join issue i on m.member_id=i.member_id  where issue_date between '01-Dec-06' and '31-Dec-06';
+
+MEMBER_NAME                              MEMBERSHIP_TYPE
+---------------------------------------- --------------------
+Richa Sharma                             Lifetime
+Garima Sen                               Annual
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q32 List members who havent returned books yet:
+
+ select member_id from issue where return_date is null;
+
+ MEMBER_ID
+----------
+         2
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q33 Select all members who joint library on same date as Garima:
+
+select distinct member_name from member1 where acc_open_date=(select acc_open_date from member1 where member_name='Garima Sen') and  member_name!='Garima Sen';
+
+no rows selected
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q34 List all members who issued books from author Loni in december month:
+
+select i.member_id from issue i inner join books b on b.book_no=i.book_no where author_name='Loni' and issue_date like '%DEC%';
+
+ MEMBER_ID
+----------
+         2
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q38 List the names of members who has issued the books whose cost is more than 300 rupees and whose author is “Scott Urman”:
+
+ select i.member_id,b.book_name,b.cost from issue i inner join member1 m on m.member_id=i.member_id  inner join books b on b.book_no=i.book_no where b.cost>300 and b.author_name='Scott Urman';
+
+ MEMBER_ID BOOK_NAME                            COST
+---------- ------------------------------ ----------
+         1 PL SQL-Ref                            750
+         2 PL SQL-Ref                            750
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Q40 List all lifetime members who joined library during 1st January 2006 to 31st December 2006 but issued only one book:
+
+select distinct  member_id,member_name from member1  where membership_type='Lifetime' and acc_open_date between '01-Jan-05' and '31-Dec-05';
+
+ MEMBER_ID MEMBER_NAME
+---------- ----------------------------------------
+         1 Richa Sharma
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

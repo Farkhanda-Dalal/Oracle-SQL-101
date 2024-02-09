@@ -1,0 +1,474 @@
+										Subprograms and Packages
+
+======================================================================================================================================================================================
+									   Subprograms (Procedures and Functions)
+======================================================================================================================================================================================
+Practice 1
+
+Create a procedure called USER_QUERY_EMP that accepts three parameters. Parameter p_myeno is of IN parameter mode which provides the empno value. 
+The other two parameters p_myjob and p_mysal are of OUT mode. The procedure retrieves the salary and job of an employee with the provided employee
+number and assigns those to the two OUT parameters respectively. The procedure should handle the error if the empno does not exist in the EMP table
+by displaying an appropriate message. Use bind variables for the two OUT Parameters.
+Compile the code, invoke the procedure, and display the salary and job title for employee number 101. Do the same for employee number 7123.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Procedure:
+
+create or replace procedure USER_QUERY_EMP(p_myeno IN number,p_myjob OUT varchar2,p_mysal OUT float)
+is
+
+BEGIN
+
+select ejob,esal INTO p_myjob,p_mysal from employee2 where empno=p_myeno;
+dbms_output.put_line('Employee no:'||p_myeno||' '||'Employee job:'||p_myjob||' '||'Employee Salary:'||p_mysal);
+
+exception
+	when no_data_found then
+	dbms_output.put_line('Employee No does not exist');
+
+END;
+/
+
+Anonymous Block:
+
+DECLARE
+
+p_myeno employee2.empno%type;
+p_myjob employee2.ejob%type;
+p_mysal employee2.esal%type;
+
+BEGIN
+
+p_myeno:=&p_myeno;
+USER_QUERY_EMP(p_myeno,p_myjob,p_mysal);
+
+END;
+/
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Output:
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Enter value for p_myeno: 101
+old   9: p_myeno:=&p_myeno;
+new   9: p_myeno:=101;
+Employee no:101 Employee job:Clerk Employee Salary:10000
+
+Enter value for p_myeno: 7123
+old   9: p_myeno:=&p_myeno;
+new   9: p_myeno:=7123;
+Employee No does not exist
+
+======================================================================================================================================================================================
+Practice 2
+
+Create a function named USER_ANNUAL_COMP that has a parameter p_eno for passing on the values of an employee number of the employee. 
+The function calculates and returns the annual compensation of the employee by using the following formula.
+     annual_compensation =  (p_sal+p_comm)*12
+      If the salary or commission value is NULL then zero should be substituted for it. 
+Give a call to USER_ANNUAL_COMP from a SELECT statement, against the EMPLOYEE2 table.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Function:
+
+create or replace function USER_ANNUAL_COMP(p_eno IN number) return number
+is
+
+annual_compensation employee2.esal%type;
+p_sal employee2.esal%type;
+p_comm employee2.esal%type;
+
+BEGIN
+
+select esal INTO p_sal from employee2 where empno=p_eno;
+
+if p_sal is null then
+p_sal:=0;
+end if;
+
+if p_sal<50000 then
+p_comm:=1000;
+else
+p_comm:=0;
+
+end if;
+
+annual_compensation:=(p_sal+p_comm)*12;
+
+return annual_compensation;
+
+END;
+/
+
+Anonymous Block:
+
+DECLARE
+
+p_eno employee2.empno%type;
+p_ann employee2.esal%type;
+
+BEGIN
+
+p_eno:=&p_eno;
+
+select USER_ANNUAL_COMP(p_eno) INTO p_ann from employee2 where empno=p_eno;
+
+dbms_output.put_line('Annual Salary:'||p_ann);
+
+END;
+/
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Output:
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Enter value for p_eno: 101
+old   8: p_eno:=&p_eno;
+new   8: p_eno:=101;
+Annual Salary:132000
+
+======================================================================================================================================================================================
+Practice 3
+
+Create a function named USER_VALID_DEPTNO that has a single parameter p_dno to accept a department number and returns a BOOLEAN value. 
+The function returns TRUE if the department number exists in the DEPT table else it returns FALSE.
+Create a procedure named SHOW_STRENGTH that accepts department number in a single parameter p_deptno from user. The procedure gives a call to USER_VALID_DEPTNO.
+If the function returns TRUE then the procedure finds out how many employees are there in the department from the EMP table and displays the same on the screen. 
+If the function returns FALSE then the procedure displays an appropriate error message.
+Give call to SHOW_STRENGTH by passing on department number 10. Do the same for department number 76
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Function:
+
+create or replace function USER_VALID_DEPTNO(p_dno IN number) return boolean
+is
+
+b boolean;
+
+BEGIN
+
+update employee2 set deptno=deptno where deptno=p_dno;
+
+if sql%found then
+b:=true;
+else
+b:=false;
+end if;
+
+return b;
+
+END;
+/
+
+Procedure:
+
+create or replace procedure SHOW_STRENGTH(p_dno IN number)
+is
+
+a boolean;
+p_eno number;
+
+BEGIN
+
+a:=USER_VALID_DEPTNO(p_dno);
+
+if a=true then
+select count(empno) INTO p_eno from employee2 where deptno=p_dno;
+dbms_output.put_line('No of employees in department:'||p_eno);
+else
+dbms_output.put_line('Department No does not exist');
+end if;
+
+END;
+/
+
+Anonymous Block:
+
+DECLARE
+
+p_dno number:=&p_dno;
+
+BEGIN
+
+SHOW_STRENGTH(p_dno);
+
+END;
+/
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Output:
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Enter value for p_dno: 10
+old   3: p_dno number:=&p_dno;
+new   3: p_dno number:=10;
+No of employees in department:4
+
+Enter value for p_dno: 74
+old   3: p_dno number:=&p_dno;
+new   3: p_dno number:=74;
+Department No does not exist
+
+======================================================================================================================================================================================
+Practice 4
+
+Create a procedure named SHOW_RECORDS that accepts a single parameter p_join_date. The procedure determines and displays on the screen, the details of the employees
+who have joined after p_join_date, in the following format. 
+Employees Joined after ddth, Month yyyy
+
+EMPLOYEE NAME		JOB		SALARY		DEPARTMENT 
+_____________________
+
+XXXXXXXX			XXXXX	99,999		  99
+XXXXXXXX			XXXXX	99,999		  99
+
+
+
+The procedure should display appropriate message if there is no employee who joined after p_join_date .
+Give a call to SHOW_RECORDS from an anonymous PL/SQL block 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PROBLEM:NOT EXECUTING.
+
+Procedure:
+
+create or replace procedure SHOW_RECORDS(p_join_date IN date)
+is
+
+j_date employee2.joining%type;
+
+BEGIN
+
+	DECLARE
+	
+	cursor c1 
+	is
+	select joining from employee2;
+
+	BEGIN
+
+	OPEN c1;
+
+	loop
+
+	fetch c1 into j_date;
+	exit when c1%notfound;
+
+	if j_date<p_join_date then
+	dbms_output.put_line('abc');
+	end if;
+
+	end loop;
+
+	CLOSE c1;
+
+	END;
+
+END;
+/
+
+Anonymous Block:
+
+DECLARE
+
+p_join_date date:=&p_join_date;
+
+BEGIN
+
+SHOW_RECORDS(p_join_date);
+
+END;
+/
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Output:
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+======================================================================================================================================================================================
+Practice 5
+
+Create a procedure named ADD_EMPLOYEE to hire an employee. Parameters to the procedure are job, mgr, hiredate, salary, commission and deptno. Validate the following:
+
+a. Employee number is not taken as a parameter but is auto generated by using a SEQUENCE. 
+b. Job is either CLERK or ANALYST or SALESMAN. The input value can be entered in any case (upper or lower or initcap).
+c. Mgr is an existing employee.
+d. Hiredate is less than system date.
+e. Salary must be greater than 800
+f. Commission is not null if the job is SALESMAN. For any other job, commission may be  null.
+g. Deptno must exist in the DEPT table.
+Insert the record if the above validations are met and display a message 1 row inserted. If the row is not inserted generate an exception and handle 
+it by displaying an appropriate message. 
+Give a call to ADD_EMPLOYEE through an anonymous PL/SQL block
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Answer Code:
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+create or replace function ADD_EMPLOYEE(job IN varchar2,mgr IN varchar2,hiredate IN date,sal IN number,comm IN number,dep IN number)return number
+
+Sequence:
+
+create sequence eno
+start with 107
+increment by 1
+maxvalue 120
+nocycle
+nocache;
+
+Procedure:
+
+create or replace procedure ADD_EMPLOYEE(job IN employee2.ejob%type,mgr IN employee2.ename%type,hiredate IN employee2.joining%type,sal IN employee2.esal%type,comm IN employee2.esal%type,dep IN employee2.deptno%type)
+is
+
+ctn number:=0;
+enm employee2.ename%type:=&enm;
+
+wrong_job exception;
+wrong_mgr exception;
+wrong_hiredate exception;
+wrong_sal exception;
+wrong_comm exception;
+wrong_dep exception;
+
+BEGIN
+
+if job in('Clerk','Analyst','Salesman') then
+ctn:=ctn+1;
+else
+raise wrong_job;
+end if;
+
+update employee2 set ename=mgr where ename=mgr;
+if sql%found then
+ctn:=ctn+1;
+else
+raise wrong_mgr;
+end if;
+
+if hiredate<sysdate then
+ctn:=ctn+1;
+else
+raise wrong_hiredate;
+end if;
+
+if sal>800 then
+ctn:=ctn+1;
+else
+raise wrong_sal;
+end if;
+
+if (job='Salesman') and (comm is not null) then 
+ctn:=ctn+0;
+else
+raise wrong_comm;
+end if;
+
+
+update employee2 set deptno=dep where deptno=dep;
+if sql%found then
+ctn:=ctn+1;
+else
+raise wrong_dep;
+end if;
+
+if ctn=5 then
+insert into employee2 values(eno.nextval,enm,job,null,hiredate,sal,dep,mgr,comm);
+dbms_output.put_line('1 row inserted.');
+end if;
+
+EXCEPTION
+	when wrong_job then
+	dbms_output.put_line('Job should be either CLERK or ANALYST or SALESMAN.');
+
+	when wrong_mgr then
+	dbms_output.put_line('Manager name does not exist.');
+
+	when wrong_hiredate then
+	dbms_output.put_line('Hiredate should be less than current date.');
+
+	when wrong_sal then
+	dbms_output.put_line('Salary must be greater than 800');
+
+	when wrong_comm then
+	dbms_output.put_line('Invalid Commission');
+
+	when wrong_dep then
+	dbms_output.put_line('Department No does not exist.');
+
+
+	when no_data_found then
+	dbms_output.put_line('Invalid data entered.');
+
+END;
+/
+
+
+Anonymous Block:
+
+DECLARE
+
+job employee2.ejob%type:=&job;
+mgr employee2.ename%type:=&mgr;
+hiredate employee2.joining%type:=&hiredate;
+sal employee2.esal%type:=&sal;
+comm employee2.esal%type:=&comm;
+dep employee2.deptno%type:=&dep;
+
+BEGIN
+
+ADD_EMPLOYEE(job,mgr,hiredate,sal,comm,dep);
+
+END;
+/
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Output:
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1 row inserted.
+
+     EMPNO ENAME                          EJOB       GRA JOINING         ESAL     DEPTNO MANAGER              COMMISSION
+---------- ------------------------------ ---------- --- --------- ---------- ---------- -------------------- ----------
+       101 Kumar                          Clerk      b   01-JAN-08      19326         10
+       102 Sunil                          President  c   01-FEB-08      15840         10
+       103 Farkhanda                      CEO        A   13-JUL-06      11000         10
+       104 Farkhanda                      Manager    a   10-DEC-08      50000         10
+       200 priya                          President  a   01-MAR-03      20000         20
+       105 Aarti                          Clerk      b   12-JUL-05      15000         12
+       106 Suresh                         Engineer   a   09-FEB-03                    11
+       107 Fatima                         Analyst        13-AUG-10      10000         12 Farkhanda                  1000
+
+======================================================================================================================================================================================
+Practice 6
+
+Create a function named FIND_SAL_GRADE which accepts salary of an employee finds the corresponding salary grade from SALGRADE table and returns the grade.
+ The function should raise an exception if the salary value does not fit in any of the salary ranges specified in the salgrade table.
+Create a procedure CALL_FIND_SAL_GRADE that does not accept any parameter. The procedure gives call to FIND_SAL_GRADE for each record in the emp table by passing
+ on the salary value from the current record. The procedure displays the corresponding employee number, employee name and the salary grade returned by FIND_SAL_GRADE, 
+on the screen. The procedure should handle error thrown by the function by displaying an appropriate message.
+Give a call to CALL_FIND_SAL_GRADE through an anonymous PL/SQL block 
+
+======================================================================================================================================================================================
+											PACKAGES
+======================================================================================================================================================================================
+Practice 7
+
+Create a package named MANAGE_EMP_PACK that has two public procedures, two package level variables and a private function. The public procedure HIRE_EMP 
+adds an employee record in EMP table and the public procedure FIRE_EMP deletes an employee record from the EMP table. The two variables v_insert_cnt and 
+v_delete_cnt are used in the package, for keeping record of the numbers of times insert / delete has been executed. 
+Create a private function VALIDATE_EMP in the package to validate employee number. This function can be called from HIRE_EMP and FIRE_EMP.
+The function VALIDATE_EMP accepts an employee number in a parameter p_eno and returns TRUE if the value of employee number exists in the EMP table else it returns FALSE.
+The procedure HIRE_EMP takes all the column values of the EMP table as parameters. It gives a call to VALIDATE_EMP by passing on the value of employee number and if the 
+function returns TRUE then it displays message Employee number already in use. If the function returns FALSE then it inserts a new record in the EMP table and displays a 
+message One employee added. It also increments the value of v_insert_cnt by 1.
+The procedure FIRE_EMP accepts an employee number as a parameter and gives a call to VALIDATE_EMP by passing on the value of employee number. 
+If the function returns TRUE then it deletes the corresponding record from the EMP table, displays message One employee deleted and increments the value 
+of v_delete_cnt by 1. If the function returns FALSE then it displays message Wrong employee number.
+Check working of the methods in MANAGE_EMP_PACK by giving calls to the public procedures and by displaying value of the appropriate package variable, through an anonymous block 
+
+======================================================================================================================================================================================
+Practice 8
+
+Create a package named MY_EMP_PACK having two overloaded functions named GET_AVG_SAL. The first function accepts ename as a parameter 
+while the second function accepts empno as a parameter and both return the average salary paid in the department to which the employee belongs.  
+Both the functions should handle the exception for non-existing employee by displaying an appropriate error message.
+Give a call to GET_AVG_SAL through an anonymous PL/SQL block by passing on employee number 7839. Do the same again by passing on employee name KING.
+
+======================================================================================================================================================================================
+

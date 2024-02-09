@@ -1,0 +1,1363 @@
+set serveroutput on;
+
+PRINT HELLO
+=============================================================================
+begin
+dbms_output.put_line('hello....');
+end;
+/
+
+output:
+hello...
+
+------------------------------------------------------------------------------
+ADDITION:
+==============================================================================
+declare
+n1 number(5);
+n2 number(5);
+add number(5);
+begin
+n1:=10;
+n2:=10;
+add:=n1+n2;
+dbms_output.put_line('addition is : '||add);
+end;
+/
+ 
+output:
+addition is : 20
+
+--------------------------------------------------------------------------------
+SUBSTRACTION:
+===============================================================================
+declare
+n1 number(5);
+n2 number(5);
+sub number(5);
+begin
+n1:=50;
+n2:=20;
+sub:=n1-n2;
+dbms_output.put_line('subtraction is : ' || sub);
+end;
+/
+
+output:
+subtraction is : 30
+
+-----------------------------------------------------------------------------------
+MULTIPLICATION:
+==================================================================================
+declare
+n1 number(5);
+n2 number(5);
+multi number(5);
+begin
+n1:=50;
+n2:=20;
+multi:=n1*n2;
+dbms_output.put_line('multiplication is : ' || multi);
+end;
+/
+
+output:
+multiplication is : 1000
+
+---------------------------------------------------------------------------------------
+DIVISION:
+=======================================================================================
+declare
+n1 number(5);
+n2 number(5);
+div number(5);
+begin
+n1:=50;
+n2:=5;
+div:=n1/n2;
+dbms_output.put_line('division is : ' || div);
+end;
+/
+
+output:
+division is : 10
+
+--------------------------------------------------------------------------------------------
+for float :
+
+
+declare
+n1 number(5,2);
+n2 number(5,2);
+add number(5,2);
+begin
+n1:=10.2;
+n2:=10.2;
+add:=n1+n2;
+dbms_output.put_line('addition is : ' || add);
+end;
+/
+
+output:
+addition is : 20.4
+
+---------------------------------------------------------------------------------------------
+AREA OF CIRCLE:
+=============================================================================================
+declare
+r number(3,2);
+ca number (5,2);
+begin
+r:=&r;
+ca:=3.14*r*r;
+dbms_output.put_line('Area of Circle = '||ca);
+end;
+/
+
+output:
+Enter value for r: 3
+old   5: r:=&r;
+new   5: r:=3;
+Area of Circle = 28.26
+
+---------------------------------------------------------------------------------------------------
+AREA OF TRIANGLE:
+==================================================================================================
+declare 
+l number(3,2);
+b number(3,2);
+ta number(5,2);
+begin
+l:=&l;
+b:=&b;
+ta:=0.5*l*b;
+dbms_output.put_line('Area of Triangle = '||ta);
+end;
+/
+
+output:
+Enter value for l: 5
+old   6: l:=&l;
+new   6: l:=5;
+Enter value for b: 5
+old   7: b:=&b;
+new   7: b:=5;
+Area of Triangle = 12.5
+
+-----------------------------------------------------------------------------------------------------------
+
+===========================================================================================================
+TAKING DATA FROM LOCAL TABLE TO PL SQL BLOCK:
+===========================================================================================================
+TO FIND SALARY AND NAME WHEN EMPLOYEE ID IS GIVEN:
+===========================================================================================================
+create table employee
+(
+empid number(5) PRIMARY KEY,
+empname varchar2(20),
+empsalary float,
+city varchar2(20),
+deptno number(5)
+);
+
+insert into employee values(101,'Ramesh',10000,'Mumbai',10);
+insert into employee values (102,'Amit',20000,'Chennai',20);
+insert into employee values (103,'Suresh',5000,'Pune',10);
+insert into employee values (105,'Ganesh',12000,'Mumbai',30);
+
+declare
+eid employee.empid%type;
+enm employee.empname%type;
+sal employee.empsalary%type;
+begin
+eid:=&eid;
+
+select empname,empsalary INTO enm,sal from employee where empid=eid;
+dbms_output.put_line('Employee ID     : '||eid);
+dbms_output.put_line('Employee Name   : '||enm);
+dbms_output.put_line('Employee Salary : '||sal);
+end;
+/
+
+Enter value for eid: 101
+old   6: eid:=&eid;
+new   6: eid:=101;
+Employee ID     : 101
+Employee Name   : Ramesh
+Employee Salary : 10000
+
+-------------------------------------------------------------------------------------------------------------------------------------
+declare
+enm employee.empname%type;
+eid employee.empid%type;
+ecity employee.city%type;
+begin
+enm:=&enm;
+select empid,city INTO eid,ecity from employee where empname=enm;
+dbms_output.put_line('EMPLOYEE ID:'||eid);
+dbms_output.put_line('CITY:'||ecity);
+end;
+/
+
+---------------------------------------------------------------------------------------------------------------------------------------
+SELECT AND UPDATE:
+=======================================================================================================================================
+
+declare
+eid employee.empid%type;
+enm employee.empname%type;
+sal employee.empsalary%type;
+incr employee.empsalary%type;
+newsal employee.empsalary%type;
+begin
+eid:=&eid;
+select empname,empsalary INTO enm,sal from employee where empid=eid;
+dbms_output.put_line('EMPLOYEE ID    :'||eid);
+dbms_output.put_line('EMPLOYEE NAME  :'||enm);
+dbms_output.put_line('EMPLOYEE SALARY:'||sal);
+
+incr:=sal*0.06;
+newsal:=incr+sal;
+update employee set empsalary=newsal where empid=eid;
+dbms_output.put_line('SALARY UPDATED');
+
+select empsalary into newsal from employee where empid=eid;
+dbms_output.put_line('Old Salary:'||sal);
+dbms_output.put_line('New Salary:'||newsal);
+end;
+/
+
+output:
+Enter value for eid: 101
+old   8: eid:=&eid;
+new   8: eid:=101;
+EMPLOYEE ID    :101
+EMPLOYEE NAME  :Ramesh
+EMPLOYEE SALARY:10000
+SALARY UPDATED
+Old Salary:10000
+New Salary:10600
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+IF ELSE:
+=============================================================================================================================================
+declare 
+eid employee.empid%type;
+enm employee.empname%type;
+sal employee.empsalary%type;
+
+begin
+eid:=&eid;
+select empname,empsalary INTO enm,sal from employee where empid=eid;
+
+if sal>10000 then
+dbms_output.put_line('SALARY IS GREATER THAN 10000');
+else
+dbms_output.put_line('SALARY IS LESS THAN 10000');
+end if;
+
+end;
+/
+
+output:
+Enter value for eid: 101
+old   7: eid:=&eid;
+new   7: eid:=101;
+SALARY IS GREATER THAN 10000
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Greater between 2 number:
+declare
+n1 number(3);
+n2 number(3);
+begin
+n1:=&n1;
+n2:=&n2;
+
+if n1>n2 then
+dbms_output.put_line('n1 is greater');
+else
+dbms_output.put_line('n2 is greater');
+end if;
+
+end;
+/
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+Greater between 3 number:
+declare
+n1 number(3);
+n2 number(3);
+n3 number(3);
+begin
+n1:=&n1;
+n2:=&n2;
+n3:=&n3;
+
+if n1>n2 and n1>n3 then
+dbms_output.put_line('n1 is greater');
+elsif n2>n1 and n2>n3 then
+dbms_output.put_line('n2 is greater');
+elsif n3>n1 and n2>n2 then
+dbms_output.put_line('n3 is greater');
+else
+dbms_output.put_line('all numbers are equal');
+
+end if;
+
+end;
+/
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Even odd no:
+
+declare
+n1 number(3);
+
+begin
+n1:=&n1;
+
+
+if (n1 mod 2)=0 then
+dbms_output.put_line('Even Number');
+else
+dbms_output.put_line('Odd Number');
+end if;
+
+end;
+/
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Check if no is divisible by 3 and 5 ,or just 3 or 5 , or not divisible by 3 and 5:
+declare
+n number;
+begin
+
+n:=&n;
+
+if (n mod 3)=0 and (n mod 5)=0 then
+dbms_output.put_line('No is divisible by 3 and 5');
+
+elsif (n mod 3)=0 and (n mod 5)!=0 then
+dbms_output.put_line('No is divisible by 3 and not divisible by 5');
+
+elsif (n mod 5)=0 and (n mod 3)!=0 then
+dbms_output.put_line('No is divisible by 5 and not divisible by 3');
+
+else
+dbms_output.put_line('No is not divisible by 3 and 5');
+
+end if;
+
+end;
+/
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+declare
+id employee.empid%type;
+sal employee.empsalary%type;
+incr employee.empsalary%type;
+newsal employee.empsalary%type;
+
+begin 
+
+id:=&id;
+
+select empsalary INTO sal from employee where empid=id;
+
+dbms_output.put_line('Salary : '||sal);
+
+if (sal<10000) then
+incr:=sal*0.05;
+newsal:=incr + sal;
+dbms_output.put_line(' New Salary : '||newsal);
+update employee set empsalary=newsal where empid=id;
+
+elsif (sal>10000 )and (sal<20000 )then
+incr:=sal*0.10;
+newsal:=incr+sal;
+dbms_output.put_line(' New Salary : '||newsal);
+update employee set empsalary=newsal where empid=id;
+
+else
+incr:=sal*0.20;
+newsal:=incr+sal;
+dbms_output.put_line('New Salary :'||newsal);
+update employee set empsalary=newsal where empid=id;
+
+end if;
+
+end;
+
+/
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+============================================================================================================================================================================
+ EXIT LOOP:
+============================================================================================================================================================================
+Loop for printing numbers 1 to 10:
+
+declare
+i number;
+
+begin
+i:=1;
+
+loop
+
+exit when i>10;
+dbms_output.put_line(i);
+i:=i+1;
+
+end loop;
+
+end;
+/
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Loop for printing table of 2:
+
+declare 
+n1 number;
+n2 number;
+
+begin
+n1:=2;
+n2:=1;
+
+loop
+
+dbms_output.put_line(n1*n2);
+
+exit when n2>9;
+
+n2:=n2+1;
+
+end loop;
+
+end;
+/
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+===================================================================================================================================================================================
+WHILE LOOP:
+===================================================================================================================================================================================
+Print 1 to 10 in while loop:
+
+declare 
+a number;
+
+begin
+a:=1;
+
+while a <=10
+
+loop
+
+dbms_output.put_line('Value of a is ' || a);
+a:=a+1;
+
+end loop;
+
+end;
+/
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Print 3 times table in while loop:
+
+declare 
+n1 number;
+n2 number;
+
+begin
+
+n1:=3;
+n2:=1;
+
+while n2<=10 
+
+loop
+
+dbms_output.put_line(n1*n2);
+n2:=n2+1;
+
+end loop;
+
+end;
+
+/
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+==========================================================================================================================================================================
+FOR LOOP:
+=========================================================================================================================================================================
+Print 1 to 10 in For Loop:
+
+DECLARE
+n number;
+
+BEGIN
+n:=1;
+
+for i in 1..10 loop
+
+dbms_output.put_line(i);
+
+end loop;
+
+END;
+
+/
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Print 1 to 10 in reverse in For Loop:
+
+DECLARE
+n number;
+
+BEGIN
+n:=1;
+
+for i in reverse 1..10 loop
+
+dbms_output.put_line(i);
+
+end loop;
+
+END;
+
+/
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Factor in For Loop:
+
+DECLARE
+
+n number;
+
+BEGIN 
+
+n:=&n;
+
+for i in 1..10
+
+loop
+
+if (n mod i)=0 then
+dbms_output.put_line(i);
+end if;
+
+end loop;
+
+END;
+
+/
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Factorial in For Loop:
+
+DECLARE
+
+r number;
+n number;
+
+BEGIN
+
+n:=&n;
+r:=1;
+
+for i in 1..n
+
+loop
+
+r:=r*i;
+
+end loop;
+
+dbms_output.put_line(r);
+
+END;
+
+/
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+Prime Number in For Loop:
+
+DECLARE 
+
+n number;
+flag number;
+
+BEGIN
+
+n:=&n;
+flag:=0;
+
+for i in 2..(n-1)
+
+loop
+
+if (n mod i)=0 then
+flag:=1;
+end if;
+
+end loop;
+
+if flag=1 then
+dbms_output.put_line('Not a prime number');
+else
+dbms_output.put_line('Prime number');
+end if;
+
+END;
+
+/
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Reverse in For Loop:
+
+
+declare
+r number (5);
+n number (5);
+begin
+
+
+=========================================================================================================================================
+CURSOR:
+=========================================================================================================================================
+EXPLICIT Cursor:
+=========================================================================================================================================
+
+DECLARE
+
+Cursor c1
+IS
+select empname,empsalary from employee;
+
+fnm Employee.empname%type;
+sal Employee.empsalary%type;
+cnt number:=0;
+
+BEGIN
+
+OPEN c1;
+
+LOOP
+
+Fetch c1 into fnm,sal;
+Exit when c1%notfound;
+
+dbms_output.put_line('Name is '||fnm);
+dbms_output.put_line('Salary is '||sal);
+
+cnt:=cnt+1;
+
+END LOOP;
+
+dbms_output.put_line('Total no of records are '||cnt);
+
+close c1;
+
+END;
+
+/
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+DECLARE
+
+Cursor c1
+IS
+select empid,empname,empsalary from employee;
+
+fnm Employee.empname%type;
+sal Employee.empsalary%type;
+id Employee.empid%type;
+incr Employee.empsalary%type;
+cnt number:=0;
+
+BEGIN
+
+OPEN c1;
+
+LOOP
+
+Fetch c1 into id,fnm,sal;
+Exit when c1%notfound;
+
+if (sal<10000) then
+incr:=sal*0.05;
+
+elsif (sal>10000 )and (sal<20000 )then
+incr:=sal*0.10;
+
+else
+incr:=sal*0.20;
+
+end if;
+
+update employee set empsalary=empsalary+incr where empid=id;
+
+dbms_output.put_line('record updated');
+
+cnt:=cnt+1;
+
+END LOOP;
+
+dbms_output.put_line('Total no of records are '||cnt);
+
+close c1;
+
+END;
+
+/
+-----------------------------------------------------------------------------------------------------------------------------------------
+DECLARE
+
+cursor emp_cur 
+is
+select * from employee where deptno=&no;
+
+v_emp employee%rowtype;
+
+BEGIN
+
+open emp_cur;
+
+loop
+
+fetch emp_cur into v_emp;
+
+exit when emp_cur%notfound;
+
+dbms_output.put_line(v_emp.empname||' '||v_emp.empsalary);
+
+end loop;
+
+close emp_cur;
+
+END;
+
+/
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+EXPLICIT CURSOR USING FOR LOOP:
+-----------------------------------------------------------------------------------------------------------------------------------------
+DECLARE
+
+cursor c1 is select * from employee;
+
+BEGIN
+
+for e_rec in c1
+
+loop
+
+dbms_output.put_line(e_rec.empname||' '||e_rec.empsalary);
+
+end loop;
+
+end;
+
+/
+----------------------------------------------------------------------------------------------------------------------------------------
+DECLARE
+
+Cursor c1
+IS
+select empid,empname,empsalary from employee;
+
+incr Employee.empsalary%type;
+cnt number:=0;
+
+BEGIN
+
+for e_rec in c1
+
+loop
+
+if (e_rec.empsalary<10000) then
+incr:=e_rec.empsalary*0.05;
+
+elsif (e_rec.empsalary>10000 )and (e_rec.empsalary<20000 )then
+incr:=e_rec.empsalary*0.10;
+
+else
+incr:=e_rec.empsalary*0.20;
+
+end if;
+
+update employee set empsalary=empsalary+incr where empid=id;
+
+dbms_output.put_line(e_rec.empname||' '||e_rec.empsalary);
+
+cnt:=cnt+1;
+
+END LOOP;
+
+dbms_output.put_line('Total no of records are '||cnt);
+
+END;
+
+/
+-----------------------------------------------------------------------------------------------------------------------------------------
+=========================================================================================================================================
+IMPLICIT CURSOR:
+=========================================================================================================================================
+
+DECLARE
+
+cnt number;
+
+BEGIN
+
+update employee set empsalary=empsalary+1000;
+cnt:=SQL%rowcount;
+dbms_output.put_line('total no of rows updated'||cnt);
+
+END;
+
+/
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+DECLARE
+
+cnt number;
+
+BEGIN
+
+update employee set empsalary=empsalary-1000 where deptno=50;
+
+if sql%found then
+cnt:=sql%rowcount;
+dbms_output.put_line('total no of rows updated:'||cnt);
+
+elsif sql%notfound then
+dbms_output.put_line('record not found');
+
+end if;
+
+END;
+
+/
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+===============================================================================================================================================
+PROCEDURE:
+===============================================================================================================================================
+CREATING PROCEDURE:
+------------------------------------------------------------------------------------------------------------------------------------------------
+create or replace procedure p1
+is
+
+BEGIN
+dbms_output.put_line('record not found');
+END;
+/
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+CALLING PROCEDURE:
+---------------------------------------------------------------------------------------------------------------------------------------------
+EXECUTE p1;
+
+OR
+
+begin
+p1;
+p1;
+p1;
+end;
+/
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+create or replace procedure padd(n1 in number,n2 in number)
+is
+
+add number;
+
+BEGIN
+
+add:=n1+n2;
+dbms_output.put_line('addition is='||add);
+end;
+/
+
+execute padd(10,20);
+
+output:
+addition is=30
+
+--------------------------------------------------------------------------------------------
+
+create or replace procedure padd(n1 in number,n2 in number,add out number)
+is
+
+BEGIN
+add:=n1+n2;
+END;
+/
+
+
+DECLARE
+
+n1 number;
+n2 number;
+add number;
+
+BEGIN
+
+n1:=&n1;
+n2:=&n2;
+padd(n1,n2,add);
+dbms_output.put_line('addition ='||add);
+
+END;
+
+/
+
+-----------------------------------------------------------------------------------------------
+create or replace procedure empsal(empid in number)
+is
+
+BEGIN 
+
+DECLARE
+
+eid employee.empid%type;
+enm employee.empname%type;
+sal employee.empsalary%type;
+annualsal employee.empsalary%type;
+incr employee.empsalary%type;
+
+BEGIN
+
+eid:=&eid;
+
+select empid,empname,empsalary INTO eid,enm,sal from employee where empid=eid;
+
+annualsal:=sal*12;
+
+dbms_output.put_line(eid||' '||enm||' '||sal);
+dbms_output.put_line('annual salary='||annualsal);
+
+if annualsal<100000 then 
+incr:=sal*0.09;
+
+else
+incr:=sal*0.06;
+
+end if;
+
+update employee set empsalary=(sal+incr) where empid=eid;
+dbms_output.put_line('salary updated');
+dbms_output.put_line('new salary='||(sal+incr));
+
+END;
+
+END;
+/
+
+begin
+empsal(103);
+end;
+/
+
+output:
+101 Ramesh 10600
+annual salary=127200
+salary updated
+new salary=11236
+
+------------------------------------------------------------------------------
+==============================================================================
+FUNCTION:
+==============================================================================
+create function:
+---------------------------------------------------------------------------
+create or replace function annual(incr employee.empsalary%type) return employee.empsalary%type
+is 
+
+ann employee.empsalary% type;
+
+BEGIN
+
+ann:=incr*12;
+
+return ann;
+
+END;
+/
+
+-----------------------------------------------------------------------------------------------------
+execute function:
+-----------------------------------------------------------------------------------------------------
+DECLARE
+
+eid employee.empid%type;
+fnm employee.empname%type;
+sal employee.empsalary%type;
+annualsal employee.empsalary%type;
+incr employee.empsalary%type;
+
+BEGIN
+
+eid:=&eid;
+select empname,empsalary into fnm,incr from employee where empid=eid;
+select annual(incr) into annualsal from dual;
+dbms_output.put_line('annual salary='||annualsal);
+
+END;
+/
+
+-----------------------------------------------------------------------------------------------------------
+FUNCTION:
+create or replace function annual(incr employee.empsalary%type) return employee.empsalary%type
+is 
+
+ann employee.empsalary% type;
+
+BEGIN
+
+ann:=incr*12;
+
+return ann;
+
+END;
+--------------------------------------------------------------------------------------------
+PROCEDURE
+
+create or replace procedure incrsalary(eid employee.empid%type)
+is
+annualsal employee.empsalary%type;
+incr employee.empsalary%type;
+sal employee.empsalary%type;
+
+BEGIN
+
+annualsal:=annual(sal);
+
+select empsalary into sal from employee where deptno=eid;
+
+if annualsal<100000 then 
+dbms_output.put_line('update salary by 7%');
+incr:=sal*0.07;
+
+else 
+dbms_output.put_line('update salary by 5%');
+incr:=sal*0.05;
+
+end if;
+
+update employee set empsalary=sal+incr where empid=eid;
+dbms_output.put_line('salary updated');
+
+exception 
+when no_data_found then 
+   raise_application_error(-20123,'Invalid Employee Number');
+when others then 
+   dbms_output.put_line('too many rows');
+END;
+/
+------------------------------------------------------------------------------------------------------
+ANONYMOUS BLOCK:
+
+DECLARE 
+
+eid employee.empid%type;
+sal employee.empsalary%type;
+BEGIN
+
+eid:=&eid;
+
+incrsalary(eid);
+
+dbms_output.put_line('thank you');
+
+END;
+/
+
+--------------------------------------------------------------------------------------------------------------
+
+create or replace function calculation (n1 float,n2 float) return float
+is 
+
+res float;
+
+BEGIN
+
+res:=n1/n2;
+
+return res;
+
+exception
+	when zero_divide then
+	dbms_output.put_line('Enter a non-zero denominator');
+	return 0;
+
+END;
+
+/
+
+DECLARE 
+
+n1 float;
+n2 float;
+div float;
+
+BEGIN
+
+n1:=&n1;
+n2:=&n2;
+
+div:=calculation(n1,n2);
+
+dbms_output.put_line(div);
+
+END;
+
+/
+
+==================================================================================
+PACKAGE
+==================================================================================
+-----------------------------------------------------------------------------------
+PACKAGE DECLARATION:
+----------------------------------------------------------------------------------
+
+create or replace package pack1
+is
+	function calculation(n1 float,n2 float)  return float;
+
+END;
+/
+
+-----------------------------------------------------------------------------------
+PACKAGE BODY:
+----------------------------------------------------------------------------------
+
+create or replace package body pack1
+is
+	function calculation(n1 float,n2 float)  return float
+	is
+	
+	res float;
+
+	BEGIN
+
+	res:=n1/n2;
+
+	return res;
+
+	exception
+	when zero_divide then
+	dbms_output.put_line('Enter a non-zero denominator');
+	return 0;
+
+END calculation;
+
+END pack1;
+
+/
+
+DECLARE 
+
+n1 float;
+n2 float;
+div float;
+
+BEGIN
+
+n1:=&n1;
+n2:=&n2;
+
+div:=pack1.calculation(n1,n2);
+
+dbms_output.put_line(div);
+
+END;
+
+/
+
+=====================================================================================
+TABLE LEVEL TRIGGER:
+=====================================================================================
+-------------------------------------------------------------------------------------
+CREATE TABLE:
+-------------------------------------------------------------------------------------
+create table test123
+(
+test_id number(5) primary key,
+fname varchar2(20),
+salary number(5)
+);
+
+ insert into test123 values(1,'abc',1000);
+ insert into test123 values(2,'def',2000);
+
+   TEST_ID FNAME                    SALARY
+---------- -------------------- ----------
+         1 abc                        1000
+         2 def                        2000
+
+
+---------------------------------------------------------------------------------------------
+CREATE TRIGGER:
+---------------------------------------------------------------------------------------------
+create or replace trigger dml_trigger
+after
+delete or update on test123
+
+BEGIN
+raise_application_error(-20002,'DML not allowed');
+END;
+/
+
+-------------------------------------------------------------------------------------
+TESTING TRIGGER:
+-------------------------------------------------------------------------------------
+ update test123 set fname='efg' where test_id=2;
+ ERROR at line 1:
+ ORA-20002: DML not allowed
+ ORA-06512: at "SYSTEM.DML_TRIGGER", line 2
+ ORA-04088: error during execution of trigger 'SYSTEM.DML_TRIGGER'
+
+-------------------------------------------------------------------------------------
+=====================================================================================
+ROW LEVEL TRIGGER:
+=====================================================================================
+-------------------------------------------------------------------------------------
+CREATE TRIGGER:
+-------------------------------------------------------------------------------------
+create or replace trigger test_trig
+before
+update of salary on test123
+for each row
+BEGIN
+if:old.salary>:new.salary then
+	raise_application_error(-20001,'Updated salary must be greater than old salary');
+end if;
+END;
+/
+
+-------------------------------------------------------------------------------------
+TESTING TRIGGER:
+-------------------------------------------------------------------------------------
+update test123 set salary=500 where test_id=1;
+update test123 set salary=500 where test_id=1
+       *
+ERROR at line 1:
+ORA-20001: Updated salary must be greater than old salary
+ORA-06512: at "SYSTEM.TEST_TRIG", line 3
+ORA-04088: error during execution of trigger 'SYSTEM.TEST_TRIG'
+
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+CREATE TABLE:
+-------------------------------------------------------------------------------------
+create table testhis as select * from test123;
+
+-------------------------------------------------------------------------------------
+CREATE TRIGGER:
+-------------------------------------------------------------------------------------
+create or replace trigger del_test
+after
+delete on test123
+for each row
+
+BEGIN
+insert into testhis values(:old.test_id,:old.fname,:old.salary);
+END;
+/
+
+-------------------------------------------------------------------------------------
+TESTING TRIGGER:
+-------------------------------------------------------------------------------------
+ select * from test123;
+
+   TEST_ID FNAME                    SALARY
+---------- -------------------- ----------
+         1 abc                        1000
+         2 def                        2000
+
+delete from test123 where test_id=1;
+
+select * from testhis;
+
+   TEST_ID FNAME                    SALARY
+---------- -------------------- ----------
+         1 abc                        1000
+         2 def                        2000
+         1 abc                        1000
+
+--------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
