@@ -21,6 +21,21 @@ select length(trim('abc   ')),length(ltrim('   abc')),length(rtrim('abc   ')) fr
 //to add 2 strings together:
 select concat('abc','xyz') from dual;
 select concat(first_name,last_name) from employees;
+
+//check for beginning and ending of string:
+SELECT * FROM Emp WHERE name LIKE 's%a';
+(returns emp details where name starts with s and ends with a'
+
+"-" is used for character matching:
+
+//to find name with exactly 3 letters
+SELECT * FROM Emp WHERE name LIKE '_ _ _';
+
+//to find name with atleast 3 letters
+SELECT * FROM Emp WHERE name LIKE '_ _ _%';
+
+//to find name starts with s and followed by exactly 3 letters
+SELECT * FROM Emp WHERE name LIKE 's_ _ _';
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 Aggregate Functions:
 //to view total number:
