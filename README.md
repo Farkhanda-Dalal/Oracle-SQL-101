@@ -1,10 +1,10 @@
 # Oracle-SQL-101
 An ode to how Oracle SQL got me interested in the world of DBMS.
 
-# Table of Contents:
+## Table of Contents:
 - [DDL Queries](SQL_Queries/SQL_Basics.txt)
   Creating tables, views, index, sequences. Details about all types of keys.
-- [DML, DQL, TCL](SQL_Queries/SQL_Commands,Funtions,Group By Clause.txt)
+- [DML, DQL, TCL](SQL_Queries/SQL_Commands,Funtions,Group_By_Clause.txt)
   Insert, Update, Delete, Select, Grant, Revoke.
 - [Functions](SQL_Queries/SQL_Commands,Funtions,Group By Clause.txt)
   String and aggregate functions.
