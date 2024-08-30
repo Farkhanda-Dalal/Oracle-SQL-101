@@ -1,0 +1,161 @@
+create table employee2
+(
+empno number(6) constraint pk_eid0 primary key,
+ename varchar2(30) not null,
+ejob varchar2(10),
+grade char(3) default 'a',
+dob date check(dob>'01-Jan-2003'),
+esal number(7),
+deptno number(2)
+);
+
+insert into employee2 values(11,'Sunil','Clerk','b','1-Jan-2008',10000,11);
+insert into employee2 values(102,'Rajesh','Salesman',null,null,null,10);
+
+//to add column:
+alter table employee2 add(email varchar(20));
+
+
+//to add data in column:
+update employee2 set email='abc@gmail.com' where empno=101;
+
+
+//to add constraint in data in column:
+alter table  employee2 add constraint emp2_email_uk unique(email);
+
+
+
+//to add column:
+alter table employee2 add (salary number(10));
+
+
+
+//to add column:
+alter table employee2 add (salary2 number(10));
+
+
+
+//to drop column:
+alter table employee2 drop column salary2;
+
+//to modify size of datatype:
+alter table employee2 modify(grade char(6));
+
+//to rename column:
+alter table employee2 rename column ename to First_Name;
+
+//to add constraint
+alter table employee2 add constraint emp2_email_pk primary key(email);
+
+//to delete constraint
+alter table employee2 drop constraint pk_eid2;
+
+//to disbale constraint
+alter table employee2 disable constraint pk_eid2;
+
+//to enable constraint
+alter table employee2 enable constraint pk_eid2;
+=============================================================================================================
+DML COMMAMDS:
+---------------------------------------------------------------------------------------------------------------
+INSERT COMMANDS:
+
+//insert simple data:
+insert into employee2 values(101,'Sunil','Clerk','b','1-Jan-2008',10000,10);
+
+//insert less values than available columns:
+insert into employee2 (empno,ename,ejob,deptno)values(104,'Farkhanda','CEO',10);
+
+//insert values from user:
+insert into employee2 values(&empno,&ename,&ejob,&grade,&dob,&esal,&depno);
+
+//insert less values than columns and take from user:
+insert into employee2 (empno,ename,esal) values(&empno,&ename,&esal) ;
+
+//insert data from 1 table to another:
+insert into emp copy(select * from employee2);
+
+----------------------------------------------------------------------------------------------------------------
+UPDATE COMMANDS:
+
+//update 1 Value
+update employee2 set ename='Kumar' where empno=101;
+
+//update 2 values ar one time
+update employee2 set ejob='President',ename='Sunil' where empno=102;
+
+//set data from 1 row to other
+update employee set esal=(select esal from employee2 where empno=200) where empno=101; 
+------------------------------------------------------------------------------------------------------------------
+DELETE COMMANDS:
+
+//delete using 1 reference:
+delete from employee2 where deptno=10;
+
+//delete row:
+delete from employee2 where empno=101;
+
+//delete all data from table:
+delete from employee2;
+-------------------------------------------------------------------------------------------------------------------
+commit;
+
+savepoint;
+
+rollback;
+
+create sequence demo_seq
+start with 10
+increment by 1
+minvalue 5
+maxvalue 15
+nocache
+nocycle
+
+--------------------------------------------------------------------------------------------------------------------
+====================================================================================================================
+DQL COMMANDS:
+
+//to view only desired colums from table:
+select employee_id,salary from employees;
+
+//to view only desired columns from table with allies(ie.shortforms we created for column names):
+select employee_id"emp_id",salary"sal" from employees;
+
+//to view data in desired columns within a desired range:
+select employee_id,first_name,salary from employees where salary>5000 and salary<15000;
+                                     OR
+select employee_id,first_name,salary from employees where salary between 5000 and 15000;
+
+//to view desired columns where condition=given value:
+select employee_id,first_name,salary from employees where salary in(10000,12000,21000);
+                                     OR
+select employee_id,first_name,salary from employees where salary=10000 or salary=12000 or salary=21000;
+
+//to view desired columns outside given range:
+select employee_id,first_name,salary from employees where salary not between 5000 and 15000;
+                                      OR
+select employee_id,first_name,salary from employees where salary not in(10000,12000,21000);
+
+//to view data in desired columns by asc order:
+select employee_id,first_name,salary from employees order by salary;
+
+//to view data in desired columns by descending order:
+select employee_id,first_name,salary from employees order by salary desc;
+
+//salary will print in ascending order and employee_id in desc order:
+select employee_id,first_name,salary from employees order by salary,employee_id desc;
+
+select employee_id,first_name from employees
+
+//to view data which is null:
+select * from employees where  COMMISSION_PCT is null;
+
+//to view data which is not repeated:
+select distinct manager_id from employees;
+
+//to view max value:
+select max(employee_id) from employees;
+
+//to view min values:
+select min(employee_id) from employees;
