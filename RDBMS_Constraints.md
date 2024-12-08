@@ -6,12 +6,12 @@ Purpose: To ensure that foreign key values in a child table must match values in
 
 Example: In a database with orders and customers tables, a foreign key customer_id in the orders table must reference an existing customer_id in the customers table.
 
-CREATE TABLE orders (
-    order_id INT PRIMARY KEY,
-    customer_id INT,
-    amount DECIMAL(10, 2),
-    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
-);
+CREATE TABLE orders ( </br>
+    order_id INT PRIMARY KEY, </br>
+    customer_id INT, </br>
+    amount DECIMAL(10, 2), </br>
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id) </br>
+); </br>
 In this case, every customer_id in the orders table must correspond to an existing customer_id in the customers table, ensuring referential integrity.
 
 ### 2. Entity Integrity Constraint
@@ -21,11 +21,11 @@ Purpose: To guarantee that every entity (record) in a table has a unique and ide
 
 Example: In the employees table, emp_id can be a primary key. The emp_id must be unique for each employee and cannot be NULL.
 
-CREATE TABLE employees (
-    emp_id INT PRIMARY KEY,
-    name VARCHAR(50),
-    department VARCHAR(50)
-);
+CREATE TABLE employees ( </br>
+    emp_id INT PRIMARY KEY, </br>
+    name VARCHAR(50), </br>
+    department VARCHAR(50) </br>
+); </br>
 Here, the emp_id serves as the unique identifier for each employee, ensuring entity integrity.
 
 ### 3. Enterprise Integrity Constraint
@@ -36,12 +36,12 @@ Purpose: To apply business-specific rules and constraints that ensure the data m
 Example: A constraint that limits an employee's salary range based on company policy.
 
 CREATE TABLE employees (
-    emp_id INT PRIMARY KEY,
-    name VARCHAR(50),
-    department VARCHAR(50),
-    salary DECIMAL(10, 2),
-    CHECK (salary >= 3000 AND salary <= 10000)  -- Enterprise Integrity constraint
-);
+    emp_id INT PRIMARY KEY, </br>
+    name VARCHAR(50), </br>
+    department VARCHAR(50), </br>
+    salary DECIMAL(10, 2), </br>
+    CHECK (salary >= 3000 AND salary <= 10000)  -- Enterprise Integrity constraint </br>
+); </br>
 In this case, the CHECK constraint ensures that the salary of an employee is between 3000 and 10000, which is an enterprise rule for the company.
 
 ### 4. Domain Integrity Constraint
@@ -51,12 +51,12 @@ Purpose: To restrict the values that can be stored in a column to valid values (
 
 Example: In a students table, you may want to ensure that the age column only accepts positive integers or values that fall within a realistic range.
 
-CREATE TABLE students (
-    student_id INT PRIMARY KEY,
-    name VARCHAR(50),
-    age INT CHECK (age >= 18 AND age <= 100),   -- Domain Integrity constraint
-    gender CHAR(1) CHECK (gender IN ('M', 'F'))  -- Ensuring only 'M' or 'F' values
-);
+CREATE TABLE students ( </br>
+    student_id INT PRIMARY KEY, </br>
+    name VARCHAR(50), </br>
+    age INT CHECK (age >= 18 AND age <= 100),   -- Domain Integrity constraint </br>
+    gender CHAR(1) CHECK (gender IN ('M', 'F'))  -- Ensuring only 'M' or 'F' values </br>
+); </br>
 In this case, the age column is restricted to values between 18 and 100, and the gender column can only have values 'M' or 'F'.
 
 Summary of Constraints:
