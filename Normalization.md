@@ -79,3 +79,49 @@ ProjectName is dependent only on ProjectID. </br>
 Employee and project details are stored only once. </br>
 - Improved consistency:
 Updates to employee or project names happen in one place, avoiding anomalies.
+
+### **3NF (Third Normal Form) Normalization:**
+Definition: A table is in Third Normal Form (3NF) if:
+It is in Second Normal Form (2NF).
+It has no transitive dependencies.
+
+Why Normalize to 3NF?
+To remove transitive dependencies and ensure that non-prime attributes have a direct relationship with the primary key, reducing redundancy and improving data integrity.
+
+Example:
+Table in 2NF (but not in 3NF): </br>
+Student Table </br>
+StudentID	StudentName	DeptID	DeptName	DeptHead </br>
+1	Alice	D1	Science	Dr. Smith </br>
+2	Bob	D2	Arts	Dr. Taylor </br>
+3	Charlie	D1	Science	Dr. Smith </br>
+Primary Key: StudentID </br>
+
+Non-prime attributes: StudentName, DeptID, DeptName, DeptHead. </br>
+
+Issues:
+- Transitive Dependency:
+DeptName and DeptHead depend on DeptID, which in turn depends on StudentID.
+StudentID → DeptID → DeptName, DeptHead.
+- Redundancy:
+DeptName and DeptHead repeat for the same DeptID.
+
+Converting to 3NF
+- Step 1: Identify Transitive Dependencies
+DeptName and DeptHead depend on DeptID, not directly on StudentID.
+- Step 2: Split the Table to Remove Transitive Dependencies
+Student Table: </br>
+StudentID	StudentName	DeptID </br>
+1	Alice	D1 </br>
+2	Bob	D2 </br>
+3	Charlie	D1 </br>
+
+Department Table: </br>
+DeptID	DeptName	DeptHead </br>
+D1	Science	Dr. Smith </br>
+D2	Arts	Dr. Taylor </br>
+
+Benefits of 3NF:
+- No transitive dependency: Non-prime attributes (DeptName, DeptHead) now depend only on the primary key of their respective table (DeptID in Department table).
+- Reduced redundancy: Department details are stored only once in the Department table.
+- Improved consistency: Updating department information affects only the Department table.
