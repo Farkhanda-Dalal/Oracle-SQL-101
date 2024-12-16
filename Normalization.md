@@ -14,7 +14,7 @@ Normalization is the process of reorganizing data in a database so that it meets
 ---
 
 ### **Redundancy and Its Problems**  
-- **Redundancy** is at the root of several problems associated with relational schemas.  
+**Redundancy** is at the root of several problems associated with relational schemas.  
 
 **Problems caused by redundancy:**  
 1) **Redundant storage:** Some information is stored repeatedly.  
@@ -50,32 +50,34 @@ First Normal Form (1NF) is the most basic level of database normalization. A dat
 - No Repeating Groups: There should be no repeating groups or arrays in a table.
   
 **Example Before Applying 1NF:** </br>
-StudentID	Name	Courses </br>
-1	John	Math, Physics </br>
-2	Alice	Chemistry, Biology </br>
-3	Bob	Math, Chemistry </br>
+| StudentID | Name  | Courses           |
+|-----------|-------|-------------------|
+| 1         | John  | Math, Physics     |
+| 2         | Alice | Chemistry, Biology|
+| 3         | Bob   | Math, Chemistry   |
 
 Issues: </br>
 The column "Courses" contains multiple values (not atomic). </br>
 This violates the rule of atomicity in 1NF. </br>
 
 **Conversion to 1NF:** </br>
-StudentID	Name	Course </br>
-1	John	Math </br>
-1	John	Physics </br>
-2	Alice	Chemistry </br>
-2	Alice	Biology </br>
-3	Bob	Math </br>
-3	Bob	Chemistry </br>
+| StudentID | Name  | Course     |
+|-----------|-------|------------|
+| 1         | John  | Math       |
+| 1         | John  | Physics    |
+| 2         | Alice | Chemistry  |
+| 2         | Alice | Biology    |
+| 3         | Bob   | Math       |
+| 3         | Bob   | Chemistry  |
 
 Fixes: </br>
 Split the "Courses" column into individual rows so that each cell contains a single atomic value.
 Maintain a unique combination of rows (e.g., using StudentID and Course).
 
 **Benefits of 1NF:**
-Prevents ambiguity in data.
-Ensures data is structured properly for relational database design.
-Simplifies querying, as each piece of data is stored in its own field.
+- Prevents ambiguity in data.
+- Ensures data is structured properly for relational database design.
+- Simplifies querying, as each piece of data is stored in its own field.
 
 ---
 
@@ -84,6 +86,23 @@ Definition:
 A table is in 2NF if:
 - It is in 1NF (data is atomic, no repeating groups).
 - It has no partial dependencies (all non-prime attributes depend on the entire primary key, not just a part of it).
+
+**Example:**
+| StudentID | CourseID | StudentName | CourseName | Instructor   |
+|-----------|----------|-------------|------------|--------------|
+| 1         | C101     | Alice       | Math       | Dr. Smith    |
+| 1         | C102     | Alice       | Science    | Dr. Brown    |
+| 2         | C101     | Bob         | Math       | Dr. Smith    |
+| 2         | C103     | Bob         | History    | Dr. Taylor   |
+
+Primary Key: (StudentID, CourseID)</br>
+Partial Dependencies:</br>
+StudentName depends only on StudentID.</br>
+CourseName and Instructor depend only on CourseID.</br>
+
+Issues:</br>
+Redundancy: StudentName repeats for the same student across courses.</br>
+Update anomalies: If CourseName for C101 changes, multiple rows must be updated.</br>
 
 **Converting to 2NF:**
 
@@ -94,23 +113,28 @@ HoursWorked depends on the full composite key (EmpID, ProjectID).
 
 Step 2: Split the Table to Remove Partial Dependencies
 Employee Table: </br>
-EmpID	EmpName  </br>
-101	Alice </br>
-102	Bob </br>
-103	Charlie </br>
+| EmpID | EmpName   |
+|-------|-----------|
+| 101   | Alice     |
+| 102   | Bob       |
+| 103   | Charlie   |
 
 Project Table: </br>
-ProjectID	ProjectName </br>
-P1	Alpha Project </br>
-P2	Beta Project </br>
-P3	Gamma Project </br>
+| ProjectID | ProjectName   |
+|-----------|---------------|
+| P1        | Alpha Project |
+| P2        | Beta Project  |
+| P3        | Gamma Project |
+
 
 Employee_Project Table (Bridge Table): </br>
-EmpID	ProjectID	HoursWorked </br>
-101	P1	20 </br>
-101	P2	15 </br>
-102	P1	30 </br>
-103	P3	25 </br>
+| EmpID | ProjectID | HoursWorked |
+|-------|-----------|-------------|
+| 101   | P1        | 20          |
+| 101   | P2        | 15          |
+| 102   | P1        | 30          |
+| 103   | P3        | 25          |
+
 
 **Benefits of 2NF:** </br>
 - No partial dependencies: </br>
@@ -134,10 +158,11 @@ To remove transitive dependencies and ensure that non-prime attributes have a di
 **Example:**
 Table in 2NF (but not in 3NF): </br>
 Student Table </br>
-StudentID	StudentName	DeptID	DeptName	DeptHead </br>
-1	         Alice	      D1	      Science	Dr. Smith </br>
-2	         Bob	      D2	      Arts	   Dr. Taylor </br>
-3	         Charlie	   D1	      Science	Dr. Smith </br>
+| StudentID | StudentName | DeptID | DeptName | DeptHead   |
+|-----------|-------------|--------|----------|------------|
+| 1         | Alice       | D1     | Science  | Dr. Smith  |
+| 2         | Bob         | D2     | Arts     | Dr. Taylor |
+| 3         | Charlie     | D1     | Science  | Dr. Smith  |
 
 Primary Key: StudentID </br>
 Non-prime attributes: StudentName, DeptID, DeptName, DeptHead. </br>
@@ -155,15 +180,18 @@ DeptName and DeptHead depend on DeptID, not directly on StudentID. </br>
 Step 2: Split the Table to Remove Transitive Dependencies </br>
 
 Student Table: </br>
-StudentID	StudentName	DeptID </br>
-1	Alice	D1 </br>
-2	Bob	D2 </br>
-3	Charlie	D1 </br>
+| StudentID | StudentName | DeptID |
+|-----------|-------------|--------|
+| 1         | Alice       | D1     |
+| 2         | Bob         | D2     |
+| 3         | Charlie     | D1     |
 
 Department Table: </br>
-DeptID	DeptName	DeptHead </br>
-D1	Science	Dr. Smith </br>
-D2	Arts	Dr. Taylor </br>
+| DeptID | DeptName | DeptHead   |
+|--------|----------|------------|
+| D1     | Science  | Dr. Smith  |
+| D2     | Arts     | Dr. Taylor |
+
 
 **Benefits of 3NF:**
 - No transitive dependency: Non-prime attributes (DeptName, DeptHead) now depend only on the primary key of their respective table (DeptID in Department table).
@@ -183,10 +211,11 @@ X is a superkey (i.e., it uniquely identifies rows).
 
 **Example:**
 Table in 3NF (but not in BCNF): </br>
-CourseID	Instructor	Room </br>
-C101	Dr. Smith	R1 </br>
-C102	Dr. Brown	R2 </br>
-C101	Dr. Smith	R2 </br>
+| CourseID | Instructor | Room |
+|----------|------------|------|
+| C101     | Dr. Smith  | R1   |
+| C102     | Dr. Brown  | R2   |
+| C101     | Dr. Smith  | R2   |
 
 Functional Dependencies: </br>
 CourseID → Instructor </br>
@@ -197,14 +226,17 @@ Instructor → Room violates BCNF because Instructor is not a superkey. </br>
 
 **Conversion to BCNF:**
 Course Table: </br>
-CourseID	Instructor </br>
-C101	Dr. Smith </br>
-C102	Dr. Brown </br>
+| CourseID | Instructor |
+|----------|------------|
+| C101     | Dr. Smith  |
+| C102     | Dr. Brown  |
 
 Instructor Table: </br>
-Instructor	Room </br>
-Dr. Smith	R1 </br>
-Dr. Brown	R2 </br>
+| Instructor | Room |
+|------------|------|
+| Dr. Smith  | R1   |
+| Dr. Brown  | R2   |
+
 
 ---
 ## **Comparison between Normal Forms:**
