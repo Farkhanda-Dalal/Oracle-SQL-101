@@ -38,6 +38,43 @@ Normalization is the process of reorganizing data in a database so that it meets
 4) **Deletion anomalies:**  
    If we delete a record with `EmpID 4`, information about `DeptID 102`, `DeptName PQR`, and `DeptLoc Mumbai` will also be deleted. This causes data loss.
 
+### **1NF (First Normal Form)***
+First Normal Form (1NF) is the most basic level of database normalization. A database table is said to be in 1NF if it satisfies the following conditions:
+
+**Key Rules for 1NF:**
+- Atomic Values: Each cell of the table must contain a single value (no multiple or composite values in a single cell).
+- Unique Columns: Each column must contain values of the same type (homogeneity).
+- Uniqueness of Rows: Each row must be unique and identifiable (usually achieved using a primary key).
+- No Repeating Groups: There should be no repeating groups or arrays in a table.
+  
+**Example Before Applying 1NF:**
+StudentID	Name	Courses
+1	John	Math, Physics
+2	Alice	Chemistry, Biology
+3	Bob	Math, Chemistry
+
+Issues:
+The column "Courses" contains multiple values (not atomic).
+This violates the rule of atomicity in 1NF.
+
+Conversion to 1NF:
+StudentID	Name	Course
+1	John	Math
+1	John	Physics
+2	Alice	Chemistry
+2	Alice	Biology
+3	Bob	Math
+3	Bob	Chemistry
+
+Fixes:
+Split the "Courses" column into individual rows so that each cell contains a single atomic value.
+Maintain a unique combination of rows (e.g., using StudentID and Course).
+
+**Benefits of 1NF:**
+Prevents ambiguity in data.
+Ensures data is structured properly for relational database design.
+Simplifies querying, as each piece of data is stored in its own field.
+
 ### **2NF (Second Normal Form)***
 Definition:
 A table is in 2NF if:
@@ -109,7 +146,8 @@ DeptName and DeptHead repeat for the same DeptID.
 Converting to 3NF
 - Step 1: Identify Transitive Dependencies
 DeptName and DeptHead depend on DeptID, not directly on StudentID.
-- Step 2: Split the Table to Remove Transitive Dependencies
+- Step 2: Split the Table to Remove Transitive Dependencies </br>
+
 Student Table: </br>
 StudentID	StudentName	DeptID </br>
 1	Alice	D1 </br>
