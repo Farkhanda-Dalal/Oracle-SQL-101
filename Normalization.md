@@ -169,3 +169,40 @@ D2	Arts	Dr. Taylor </br>
 - No transitive dependency: Non-prime attributes (DeptName, DeptHead) now depend only on the primary key of their respective table (DeptID in Department table).
 - Reduced redundancy: Department details are stored only once in the Department table.
 - Improved consistency: Updating department information affects only the Department table.
+
+---
+
+## **BCNF (Boyce-Codd Normal Form)**
+Definition:
+A table is in BCNF if:
+
+It is in 3NF.
+For every functional dependency
+X→Y, 
+X is a superkey (i.e., it uniquely identifies rows).
+
+**Example:**
+Table in 3NF (but not in BCNF): </br>
+CourseID	Instructor	Room </br>
+C101	Dr. Smith	R1 </br>
+C102	Dr. Brown	R2 </br>
+C101	Dr. Smith	R2 </br>
+
+Functional Dependencies: </br>
+CourseID → Instructor </br>
+Instructor → Room </br>
+
+Issue: </br>
+Instructor → Room violates BCNF because Instructor is not a superkey. </br>
+
+**Conversion to BCNF:**
+Course Table: </br>
+CourseID	Instructor </br>
+C101	Dr. Smith </br>
+C102	Dr. Brown </br>
+
+Instructor Table: </br>
+Instructor	Room </br>
+Dr. Smith	R1 </br>
+Dr. Brown	R2 </br>
+
