@@ -150,8 +150,8 @@ StudentID → DeptID → DeptName, DeptHead.
 DeptName and DeptHead repeat for the same DeptID.
 
 **Converting to 3NF:**
-Step 1: Identify Transitive Dependencies
-DeptName and DeptHead depend on DeptID, not directly on StudentID.
+Step 1: Identify Transitive Dependencies </br>
+DeptName and DeptHead depend on DeptID, not directly on StudentID. </br>
 Step 2: Split the Table to Remove Transitive Dependencies </br>
 
 Student Table: </br>
@@ -205,4 +205,13 @@ Instructor Table: </br>
 Instructor	Room </br>
 Dr. Smith	R1 </br>
 Dr. Brown	R2 </br>
+
+---
+## **Comparison between Normal Forms:**
+| Normal Form | Requirement                     | Goal                                            |
+|-------------|---------------------------------|------------------------------------------------|
+| 2NF         | No partial dependencies        | Eliminate redundancy from composite keys.      |
+| 3NF         | No transitive dependencies     | Ensure non-prime attributes depend only on the primary key. |
+| BCNF        | Every determinant is a superkey| Ensure all functional dependencies are preserved. |
+
 
