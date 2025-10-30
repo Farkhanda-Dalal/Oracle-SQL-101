@@ -87,53 +87,95 @@ A table is in 2NF if:
 - It is in 1NF (data is atomic, no repeating groups).
 - It has no partial dependencies (all non-prime attributes depend on the entire primary key, not just a part of it).
 
-**Example:**
-| StudentID | CourseID | StudentName | CourseName | Instructor   |
-|-----------|----------|-------------|------------|--------------|
-| 1         | C101     | Alice       | Math       | Dr. Smith    |
-| 1         | C102     | Alice       | Science    | Dr. Brown    |
-| 2         | C101     | Bob         | Math       | Dr. Smith    |
-| 2         | C103     | Bob         | History    | Dr. Taylor   |
+## 🧩 What is **Second Normal Form (2NF)?**
 
-Primary Key: (StudentID, CourseID)</br>
-Partial Dependencies:</br>
-StudentName depends only on StudentID.</br>
-CourseName and Instructor depend only on CourseID.</br>
+**Simple Definition:**
 
-Issues:</br>
-Redundancy: StudentName repeats for the same student across courses.</br>
-Update anomalies: If CourseName for C101 changes, multiple rows must be updated.</br>
+> A table is in 2NF **if every non-key column depends on the entire primary key**, not just a *part* of it.
 
-**Converting to 2NF:**
+---
 
-Step 1: Identify Partial Dependencies
-EmpName depends on EmpID.
-ProjectName depends on ProjectID.
-HoursWorked depends on the full composite key (EmpID, ProjectID).
+### 🧠 What does that mean?
 
-Step 2: Split the Table to Remove Partial Dependencies
-Employee Table: </br>
-| EmpID | EmpName   |
-|-------|-----------|
-| 101   | Alice     |
-| 102   | Bob       |
-| 103   | Charlie   |
+Let’s say your table’s **primary key** is made of **two columns** (a *composite key*).
+If a non-key column depends on only **one** of those two — that’s a *partial dependency* ❌
 
-Project Table: </br>
-| ProjectID | ProjectName   |
-|-----------|---------------|
-| P1        | Alpha Project |
-| P2        | Beta Project  |
-| P3        | Gamma Project |
+2NF removes that.
 
+---
 
-Employee_Project Table (Bridge Table): </br>
-| EmpID | ProjectID | HoursWorked |
-|-------|-----------|-------------|
-| 101   | P1        | 20          |
-| 101   | P2        | 15          |
-| 102   | P1        | 30          |
-| 103   | P3        | 25          |
+### 🧩 Example — Before 2NF
+
+| **Student_ID** | **Course_ID** | **Student_Name** | **Course_Name** |
+| -------------- | ------------- | ---------------- | --------------- |
+| 1              | C1            | Alice            | DBMS            |
+| 2              | C1            | Bob              | DBMS            |
+| 1              | C2            | Alice            | OS              |
+
+**Composite Primary Key:** `(Student_ID, Course_ID)`
+(because one student can take many courses)
+
+---
+
+### 🔍 Dependencies:
+
+| Column         | Depends On                          |
+| -------------- | ----------------------------------- |
+| `Student_Name` | Student_ID ✅ (only part of the key) |
+| `Course_Name`  | Course_ID ✅ (only part of the key)  |
+
+So both `Student_Name` and `Course_Name` depend on **part** of the key — not the whole `(Student_ID, Course_ID)` pair.
+➡️ ❌ **Not in 2NF** (has partial dependencies).
+
+---
+
+### ✅ Convert to 2NF (Remove Partial Dependencies)
+
+Split the table into 3 smaller ones:
+
+**1️⃣ Students Table**
+
+```sql
+Students(Student_ID, Student_Name)
+```
+
+| Student_ID | Student_Name |
+| ---------- | ------------ |
+| 1          | Alice        |
+| 2          | Bob          |
+
+**2️⃣ Courses Table**
+
+```sql
+Courses(Course_ID, Course_Name)
+```
+
+| Course_ID | Course_Name |
+| --------- | ----------- |
+| C1        | DBMS        |
+| C2        | OS          |
+
+**3️⃣ Enrollments Table**
+
+```sql
+Enrollments(Student_ID, Course_ID)
+```
+
+| Student_ID | Course_ID |
+| ---------- | --------- |
+| 1          | C1        |
+| 2          | C1        |
+| 1          | C2        |
+
+---
+
+✅ Now:
+
+* Every non-key attribute depends on the **whole key** (no partial dependencies).
+* So this structure is in **2NF**.
+---
+
+Would you like me to explain **3NF** next (it’s actually easier once you get this)?
 
 
 **Benefits of 2NF:** </br>
